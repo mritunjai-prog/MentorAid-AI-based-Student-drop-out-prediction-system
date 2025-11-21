@@ -12,6 +12,7 @@ import Introduction from "./pages/Introduction";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import StudentDetails from "./pages/StudentDetails";
+import RiskPredictor from "./pages/RiskPredictor";
 import { Toaster } from "./components/ui/Toaster";
 
 function AppRoutes() {
@@ -44,6 +45,10 @@ function AppRoutes() {
       <Route
         path="/student/:id"
         element={user ? <StudentDetails /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/risk-predictor"
+        element={user ? <RiskPredictor /> : <Navigate to="/login" />}
       />
       <Route path="/" element={<Navigate to="/introduction" />} />
     </Routes>

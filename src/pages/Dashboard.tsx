@@ -1,39 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Users, 
-  AlertTriangle, 
-  Calendar, 
-  DollarSign, 
-  Search, 
-  Filter, 
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import {
+  Users,
+  AlertTriangle,
+  Calendar,
+  DollarSign,
+  Search,
+  Filter,
   Download,
   Upload,
   Plus,
   LogOut,
   Bell,
-  Settings
-} from 'lucide-react';
-import { AnimatedThemeToggle } from '../components/ui/AnimatedThemeToggle';
-import { DashboardStats } from '../components/dashboard/DashboardStats';
-import { StudentTable } from '../components/dashboard/StudentTable';
-import { ChartsSection } from '../components/dashboard/ChartsSection';
-import { FileUpload } from '../components/dashboard/FileUpload';
-import { Student } from '../types/student';
-import { generateMockStudents } from '../data/mockData';
-import { toast } from '../components/ui/Toaster';
+  Settings,
+  Calculator,
+} from "lucide-react";
+import { AnimatedThemeToggle } from "../components/ui/AnimatedThemeToggle";
+import { DashboardStats } from "../components/dashboard/DashboardStats";
+import { StudentTable } from "../components/dashboard/StudentTable";
+import { ChartsSection } from "../components/dashboard/ChartsSection";
+import { FileUpload } from "../components/dashboard/FileUpload";
+import { Student } from "../types/student";
+import { generateMockStudents } from "../data/mockData";
+import { toast } from "../components/ui/Toaster";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [students, setStudents] = useState<Student[]>([]);
   const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
-    riskLevel: 'all',
-    class: 'all',
-    department: 'all'
+    riskLevel: "all",
+    class: "all",
+    department: "all",
   });
   const [showUpload, setShowUpload] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -51,22 +52,27 @@ export default function Dashboard() {
 
     // Apply search
     if (searchTerm) {
-      filtered = filtered.filter(student =>
-        student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.studentId.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (student) =>
+          student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          student.studentId.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     // Apply filters
-    if (filters.riskLevel !== 'all') {
-      filtered = filtered.filter(student => student.riskLevel === filters.riskLevel);
+    if (filters.riskLevel !== "all") {
+      filtered = filtered.filter(
+        (student) => student.riskLevel === filters.riskLevel
+      );
     }
-    if (filters.class !== 'all') {
-      filtered = filtered.filter(student => student.class === filters.class);
+    if (filters.class !== "all") {
+      filtered = filtered.filter((student) => student.class === filters.class);
     }
-    if (filters.department !== 'all') {
-      filtered = filtered.filter(student => student.department === filters.department);
+    if (filters.department !== "all") {
+      filtered = filtered.filter(
+        (student) => student.department === filters.department
+      );
     }
 
     setFilteredStudents(filtered);
@@ -77,37 +83,48 @@ export default function Dashboard() {
   };
 
   const handleFileUpload = (files: FileList) => {
-    toast.success(`Successfully uploaded ${files.length} file(s). Processing data...`);
+    toast.success(
+      `Successfully uploaded ${files.length} file(s). Processing data...`
+    );
     setShowUpload(false);
-    
+
     // Simulate processing
     setTimeout(() => {
-      toast.success('Data integration complete! Dashboard updated.');
+      toast.success("Data integration complete! Dashboard updated.");
     }, 2000);
   };
 
   const exportData = () => {
     const csv = [
-      ['Name', 'Student ID', 'Attendance', 'Average Marks', 'Fee Status', 'Risk Level'].join(','),
-      ...filteredStudents.map(student => [
-        student.name,
-        student.studentId,
-        `${student.attendance}%`,
-        student.averageMarks,
-        student.feeStatus,
-        student.riskLevel
-      ].join(','))
-    ].join('\n');
+      [
+        "Name",
+        "Student ID",
+        "Attendance",
+        "Average Marks",
+        "Fee Status",
+        "Risk Level",
+      ].join(","),
+      ...filteredStudents.map((student) =>
+        [
+          student.name,
+          student.studentId,
+          `${student.attendance}%`,
+          student.averageMarks,
+          student.feeStatus,
+          student.riskLevel,
+        ].join(",")
+      ),
+    ].join("\n");
 
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'students-export.csv';
+    a.download = "students-export.csv";
     a.click();
     window.URL.revokeObjectURL(url);
-    
-    toast.success('Data exported successfully!');
+
+    toast.success("Data exported successfully!");
   };
 
   if (loading) {
@@ -115,7 +132,9 @@ export default function Dashboard() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading dashboard...</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            Loading dashboard...
+          </p>
         </div>
       </div>
     );
@@ -123,9 +142,13 @@ export default function Dashboard() {
 
   const stats = {
     totalStudents: students.length,
-    atRiskStudents: students.filter(s => s.riskLevel !== 'low').length,
-    averageAttendance: Math.round(students.reduce((acc, s) => acc + s.attendance, 0) / students.length),
-    pendingFees: students.filter(s => s.feeStatus === 'pending' || s.feeStatus === 'overdue').length
+    atRiskStudents: students.filter((s) => s.riskLevel !== "low").length,
+    averageAttendance: Math.round(
+      students.reduce((acc, s) => acc + s.attendance, 0) / students.length
+    ),
+    pendingFees: students.filter(
+      (s) => s.feeStatus === "pending" || s.feeStatus === "overdue"
+    ).length,
   };
 
   return (
@@ -139,8 +162,12 @@ export default function Dashboard() {
                 <span className="text-lg font-bold text-white">M</span>
               </div>
               <div className="ml-4">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">MentorAid</h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Student Support Dashboard</p>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  MentorAid
+                </h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Student Support Dashboard
+                </p>
               </div>
             </div>
 
@@ -148,13 +175,17 @@ export default function Dashboard() {
               <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
                 <Bell className="w-5 h-5" />
               </button>
-              
+
               <AnimatedThemeToggle />
 
               <div className="flex items-center space-x-3">
                 <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 capitalize">{user?.role}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {user?.name}
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 capitalize">
+                    {user?.role}
+                  </p>
                 </div>
                 <div className="h-8 w-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
                   <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
@@ -199,7 +230,9 @@ export default function Dashboard() {
             <div className="flex flex-wrap gap-3">
               <select
                 value={filters.riskLevel}
-                onChange={(e) => setFilters(prev => ({ ...prev, riskLevel: e.target.value }))}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, riskLevel: e.target.value }))
+                }
                 className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-sm"
               >
                 <option value="all">All Risk Levels</option>
@@ -210,7 +243,9 @@ export default function Dashboard() {
 
               <select
                 value={filters.class}
-                onChange={(e) => setFilters(prev => ({ ...prev, class: e.target.value }))}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, class: e.target.value }))
+                }
                 className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-sm"
               >
                 <option value="all">All Classes</option>
@@ -221,6 +256,14 @@ export default function Dashboard() {
                 <option value="12A">12A</option>
                 <option value="12B">12B</option>
               </select>
+
+              <button
+                onClick={() => navigate("/risk-predictor")}
+                className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-semibold"
+              >
+                <Calculator className="w-4 h-4 mr-2" />
+                Risk Predictor
+              </button>
 
               <button
                 onClick={exportData}
@@ -245,7 +288,7 @@ export default function Dashboard() {
         <ChartsSection students={filteredStudents} />
 
         {/* Students Table */}
-        <StudentTable 
+        <StudentTable
           students={filteredStudents}
           onStudentClick={handleStudentClick}
         />

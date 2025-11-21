@@ -128,14 +128,14 @@
 
 ### Model Performance Comparison
 
-| Model | Accuracy | Precision | Recall | F1-Score | Status |
-|-------|----------|-----------|--------|----------|--------|
-| **SVM (RBF)** | **99.50%** | 99.48% | 99.52% | 99.50% | ✅ **Production** |
-| Random Forest | 98.76% | 98.71% | 98.80% | 98.75% | ✅ Trained |
-| Neural Network | 97.85% | 97.82% | 97.88% | 97.85% | ✅ Trained |
-| Logistic Regression | 95.23% | 95.18% | 95.28% | 95.23% | ✅ Trained |
-| K-Nearest Neighbors | 94.12% | 94.08% | 94.16% | 94.12% | ✅ Trained |
-| Decision Tree | 92.67% | 92.61% | 92.73% | 92.67% | ✅ Trained |
+| Model               | Accuracy   | Precision | Recall | F1-Score | Status            |
+| ------------------- | ---------- | --------- | ------ | -------- | ----------------- |
+| **SVM (RBF)**       | **99.50%** | 99.48%    | 99.52% | 99.50%   | ✅ **Production** |
+| Random Forest       | 98.76%     | 98.71%    | 98.80% | 98.75%   | ✅ Trained        |
+| Neural Network      | 97.85%     | 97.82%    | 97.88% | 97.85%   | ✅ Trained        |
+| Logistic Regression | 95.23%     | 95.18%    | 95.28% | 95.23%   | ✅ Trained        |
+| K-Nearest Neighbors | 94.12%     | 94.08%    | 94.16% | 94.12%   | ✅ Trained        |
+| Decision Tree       | 92.67%     | 92.61%    | 92.73% | 92.67%   | ✅ Trained        |
 
 ### 📊 Dataset Overview
 
@@ -287,12 +287,12 @@ npm run dev
 
 ### Development Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
+| Command           | Description              |
+| ----------------- | ------------------------ |
+| `npm run dev`     | Start development server |
+| `npm run build`   | Build for production     |
 | `npm run preview` | Preview production build |
-| `npm run lint` | Run ESLint |
+| `npm run lint`    | Run ESLint               |
 
 ### Environment Variables (Future)
 
@@ -312,10 +312,10 @@ VITE_SUPABASE_KEY=your_supabase_key
 
 Use **any email/password** combination to access the demo:
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | `admin@school.edu` | `any password` |
-| Mentor | `mentor@school.edu` | `any password` |
+| Role    | Email                | Password       |
+| ------- | -------------------- | -------------- |
+| Admin   | `admin@school.edu`   | `any password` |
+| Mentor  | `mentor@school.edu`  | `any password` |
 | Teacher | `teacher@school.edu` | `any password` |
 
 ### Demo Features
@@ -332,13 +332,16 @@ Use **any email/password** combination to access the demo:
 ## 📸 Screenshots
 
 ### Dashboard Overview
-*Coming soon - Main dashboard with student risk visualization*
+
+_Coming soon - Main dashboard with student risk visualization_
 
 ### Student Profile
-*Coming soon - Detailed student information and AI insights*
+
+_Coming soon - Detailed student information and AI insights_
 
 ### Prediction Interface
-*Coming soon - Real-time risk prediction form*
+
+_Coming soon - Real-time risk prediction form_
 
 ---
 

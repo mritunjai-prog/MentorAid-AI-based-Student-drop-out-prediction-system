@@ -1,0 +1,7 @@
+Model,Default Accuracy,Tuned Accuracy,Improvement,Best Params,Tuning Time
+Random Forest (Advanced),0.9632,0.9816,+1.91%,"{'bootstrap': False, 'criterion': 'gini', 'max_depth': 20, 'max_features': 'log2', 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 200}",7970.0s
+Decision Tree (Advanced),0.9163,0.9372,+2.28%,"{'ccp_alpha': 0.0, 'criterion': 'gini', 'max_depth': 15, 'max_features': None, 'min_samples_leaf': 1, 'min_samples_split': 3, 'splitter': 'random'}",413.3s
+Logistic Regression (Advanced),0.7814,0.7822,+0.11%,"{'solver': 'saga', 'penalty': 'l1', 'max_iter': 500, 'l1_ratio': 0.9, 'class_weight': None, 'C': 1}",2.3s
+SVM (Advanced),0.8752,0.9950,+13.69%,"{'shrinking': False, 'kernel': 'rbf', 'gamma': 1, 'degree': 3, 'class_weight': None, 'cache_size': 500, 'C': 1}",463.0s
+Neural Network (Deep RELU + BatchNorm),0.7000,0.8787,+25.52%,"Deep RELU + BatchNorm, BatchNorm, Dropout, EarlyStopping, LR Scheduler",N/A (architecture search)
+KNN (Advanced),0.8174,0.9121,+11.58%,"{'weights': 'distance', 'p': 4, 'n_neighbors': 3, 'metric': 'hamming', 'leaf_size': 50, 'algorithm': 'ball_tree'}",5.0s

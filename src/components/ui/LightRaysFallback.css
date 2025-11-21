@@ -1,0 +1,33 @@
+.light-rays-fallback {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.rays-gradient {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at top center,
+    rgba(59, 130, 246, 0.3) 0%,
+    rgba(59, 130, 246, 0.15) 30%,
+    rgba(59, 130, 246, 0.05) 60%,
+    transparent 100%
+  );
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}

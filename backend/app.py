@@ -569,6 +569,25 @@ def create_intervention():
         return jsonify({"error": str(e)}), 400
 
 
+# ==================== ROOT & HEALTH ENDPOINTS ====================
+@app.route("/", methods=["GET"])
+def root():
+    """Root endpoint"""
+    return jsonify({
+        "message": "MentorAid API is running",
+        "version": "1.0.0",
+        "status": "healthy"
+    })
+
+@app.route("/api/health", methods=["GET"])
+def health_check():
+    """Health check endpoint"""
+    return jsonify({
+        "status": "healthy",
+        "database": "connected" if db else "disconnected",
+        "ml_models": "loaded" if model and scaler and label_encoder else "not_loaded"
+    })
+
 # ==================== STATS ENDPOINTS ====================
 @app.route("/api/stats/predictions", methods=["GET"])
 @jwt_required()

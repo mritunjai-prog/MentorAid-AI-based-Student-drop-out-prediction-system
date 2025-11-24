@@ -3,11 +3,11 @@ MongoDB Database Connection and Models
 """
 
 from pymongo import MongoClient
-from pymongo.server_api import ServerApi
 from datetime import datetime
 from bson import ObjectId
 import logging
-import ssl
+import ssl as ssl_module
+import certifi
 
 logger = logging.getLogger(__name__)
 
@@ -16,17 +16,16 @@ class Database:
     """MongoDB Database Manager"""
 
     def __init__(self, uri, db_name):
-        # Configure MongoDB connection - simplified for better compatibility
+        # Configure MongoDB connection with proper SSL/TLS for Render
         try:
-            # Remove query parameters from URI and add them programmatically
-            base_uri = uri.split('?')[0]
-            
+            # Use certifi for proper SSL certificates
             self.client = MongoClient(
-                base_uri,
+                uri,
                 serverSelectionTimeoutMS=30000,
                 connectTimeoutMS=30000,
                 retryWrites=True,
-                w='majority'
+                w='majority',
+                tlsCAFile=certifi.where()  # Use certifi's CA bundle
             )
             # Test the connection
             self.client.admin.command("ping")

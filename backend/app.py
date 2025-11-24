@@ -48,14 +48,27 @@ CORS(app, origins=Config.CORS_ORIGINS, supports_credentials=True)
 # Initialize Database
 try:
     db = Database(Config.MONGODB_URI, Config.MONGODB_DB_NAME)
-    user_model = UserModel(db)
-    prediction_model = PredictionModel(db)
-    student_model = StudentModel(db)
-    intervention_model = InterventionModel(db)
-    logger.info("✅ Database connected successfully")
+    if db.client is not None:
+        user_model = UserModel(db)
+        prediction_model = PredictionModel(db)
+        student_model = StudentModel(db)
+        intervention_model = InterventionModel(db)
+        logger.info("✅ Database models initialized successfully")
+    else:
+        logger.warning("⚠️ Database connection failed, running without database")
+        db = None
+        user_model = None
+        prediction_model = None
+        student_model = None
+        intervention_model = None
 except Exception as e:
-    logger.error(f"❌ Database connection failed: {e}")
+    logger.error(f"❌ Database initialization failed: {e}")
+    logger.error(traceback.format_exc())
     db = None
+    user_model = None
+    prediction_model = None
+    student_model = None
+    intervention_model = None
 
 # Load ML model artifacts
 MODEL_DIR = Path(__file__).parent.parent / "ml-models" / "trained_models"
@@ -190,6 +203,9 @@ def preprocess_data(df):
 @app.route("/api/auth/google", methods=["POST"])
 def google_auth():
     """Authenticate user with Google OAuth token"""
+    if not db:
+        return jsonify({"error": "Database not available"}), 503
+        
     try:
         data = request.get_json()
         token = data.get("token")
@@ -221,15 +237,15 @@ def google_auth():
             logger.info(f"User logged in: {user['email']}")
 
         # Create JWT tokens
-        access_token = create_access_token(identity=user["_id"])
-        refresh_token = create_refresh_token(identity=user["_id"])
+        access_token = create_access_token(identity=str(user["_id"]))
+        refresh_token = create_refresh_token(identity=str(user["_id"]))
 
         return jsonify(
             {
                 "access_token": access_token,
                 "refresh_token": refresh_token,
                 "user": {
-                    "id": user["_id"],
+                    "id": str(user["_id"]),
                     "email": user["email"],
                     "name": user["name"],
                     "picture": user.get("picture"),
@@ -237,6 +253,11 @@ def google_auth():
                 },
             }
         )
+
+    except Exception as e:
+        logger.error(f"Google auth error: {e}")
+        logger.error(traceback.format_exc())
+        return jsonify({"error": "Authentication failed", "details": str(e)}), 500
 
     except Exception as e:
         logger.error(f"Google auth error: {e}")
@@ -561,20 +582,24 @@ def create_intervention():
 @app.route("/", methods=["GET"])
 def root():
     """Root endpoint"""
-    return jsonify({
-        "message": "MentorAid API is running",
-        "version": "1.0.0",
-        "status": "healthy"
-    })
+    return jsonify(
+        {"message": "MentorAid API is running", "version": "1.0.0", "status": "healthy"}
+    )
+
 
 @app.route("/api/health", methods=["GET"])
 def health_check():
     """Health check endpoint"""
-    return jsonify({
-        "status": "healthy",
-        "database": "connected" if db else "disconnected",
-        "ml_models": "loaded" if model and scaler and label_encoder else "not_loaded"
-    })
+    return jsonify(
+        {
+            "status": "healthy",
+            "database": "connected" if db else "disconnected",
+            "ml_models": (
+                "loaded" if model and scaler and label_encoder else "not_loaded"
+            ),
+        }
+    )
+
 
 # ==================== STATS ENDPOINTS ====================
 @app.route("/api/stats/predictions", methods=["GET"])

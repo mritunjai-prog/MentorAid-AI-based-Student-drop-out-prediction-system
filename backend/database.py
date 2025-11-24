@@ -16,16 +16,17 @@ class Database:
     """MongoDB Database Manager"""
 
     def __init__(self, uri, db_name):
-        # Configure MongoDB connection with TLS/SSL settings for Render compatibility
+        # Configure MongoDB connection - simplified for better compatibility
         try:
+            # Remove query parameters from URI and add them programmatically
+            base_uri = uri.split('?')[0]
+            
             self.client = MongoClient(
-                uri,
-                server_api=ServerApi("1"),
-                tls=True,
-                tlsAllowInvalidCertificates=True,
-                serverSelectionTimeoutMS=5000,
-                connectTimeoutMS=10000,
-                socketTimeoutMS=10000,
+                base_uri,
+                serverSelectionTimeoutMS=30000,
+                connectTimeoutMS=30000,
+                retryWrites=True,
+                w='majority'
             )
             # Test the connection
             self.client.admin.command("ping")
@@ -37,6 +38,7 @@ class Database:
             logger.info(f"✅ Connected to MongoDB: {db_name}")
         except Exception as e:
             logger.error(f"❌ MongoDB connection failed: {e}")
+            logger.error(f"Connection string: {uri.split('@')[1] if '@' in uri else 'invalid'}")
             # Set to None to allow app to continue without DB
             self.client = None
             self.db = None

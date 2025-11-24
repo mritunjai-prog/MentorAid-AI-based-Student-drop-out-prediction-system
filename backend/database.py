@@ -27,7 +27,7 @@ class Database:
                 w='majority',
                 tls=True,
                 tlsAllowInvalidCertificates=True,
-                ssl_cert_reqs=ssl_module.CERT_NONE  # Disable certificate validation
+                tlsInsecure=True  # Disable hostname verification
             )
             # Test the connection
             self.client.admin.command("ping")

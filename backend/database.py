@@ -16,16 +16,18 @@ class Database:
     """MongoDB Database Manager"""
 
     def __init__(self, uri, db_name):
-        # Configure MongoDB connection with proper SSL/TLS for Render
+        # Configure MongoDB connection with SSL certificate validation disabled
+        # This is necessary because Render's environment has SSL/TLS issues with MongoDB Atlas
         try:
-            # Use certifi for proper SSL certificates
             self.client = MongoClient(
                 uri,
                 serverSelectionTimeoutMS=30000,
                 connectTimeoutMS=30000,
                 retryWrites=True,
                 w='majority',
-                tlsCAFile=certifi.where()  # Use certifi's CA bundle
+                tls=True,
+                tlsAllowInvalidCertificates=True,
+                ssl_cert_reqs=ssl_module.CERT_NONE  # Disable certificate validation
             )
             # Test the connection
             self.client.admin.command("ping")

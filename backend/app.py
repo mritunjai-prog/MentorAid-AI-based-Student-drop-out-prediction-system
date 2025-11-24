@@ -43,7 +43,7 @@ app.config.from_object(Config)
 jwt = JWTManager(app)
 
 # Initialize CORS
-CORS(app, origins=[Config.FRONTEND_URL], supports_credentials=True)
+CORS(app, origins=Config.CORS_ORIGINS, supports_credentials=True)
 
 # Initialize Database
 try:

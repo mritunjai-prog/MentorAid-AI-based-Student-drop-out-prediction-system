@@ -29,5 +29,6 @@ class Config:
     FLASK_ENV = os.getenv("FLASK_ENV", "development")
     DEBUG = os.getenv("FLASK_DEBUG", "1") == "1"
 
-    # CORS
+    # CORS - Allow both local and production URLs
     FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+    CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173,https://mentoraid.netlify.app").split(",")

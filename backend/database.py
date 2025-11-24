@@ -16,19 +16,34 @@ class Database:
     """MongoDB Database Manager"""
 
     def __init__(self, uri, db_name):
-        # Configure MongoDB connection with TLS/SSL settings
-        self.client = MongoClient(
-            uri,
-            server_api=ServerApi('1'),
-            tls=True,
-            tlsAllowInvalidCertificates=True  # For Render compatibility
-        )
-        self.db = self.client[db_name]
-        self.users = self.db.users
-        self.predictions = self.db.predictions
-        self.students = self.db.students
-        self.interventions = self.db.interventions
-        logger.info(f"✅ Connected to MongoDB: {db_name}")
+        # Configure MongoDB connection with TLS/SSL settings for Render compatibility
+        try:
+            self.client = MongoClient(
+                uri,
+                server_api=ServerApi("1"),
+                tls=True,
+                tlsAllowInvalidCertificates=True,
+                serverSelectionTimeoutMS=5000,
+                connectTimeoutMS=10000,
+                socketTimeoutMS=10000,
+            )
+            # Test the connection
+            self.client.admin.command("ping")
+            self.db = self.client[db_name]
+            self.users = self.db.users
+            self.predictions = self.db.predictions
+            self.students = self.db.students
+            self.interventions = self.db.interventions
+            logger.info(f"✅ Connected to MongoDB: {db_name}")
+        except Exception as e:
+            logger.error(f"❌ MongoDB connection failed: {e}")
+            # Set to None to allow app to continue without DB
+            self.client = None
+            self.db = None
+            self.users = None
+            self.predictions = None
+            self.students = None
+            self.interventions = None
 
     def close(self):
         """Close database connection"""

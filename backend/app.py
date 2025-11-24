@@ -275,18 +275,6 @@ def get_current_user():
 
 
 # ==================== ML PREDICTION ENDPOINTS ====================
-@app.route("/api/health", methods=["GET"])
-def health_check():
-    """Health check endpoint"""
-    return jsonify(
-        {
-            "status": "healthy",
-            "model_loaded": model is not None,
-            "database_connected": db is not None,
-            "message": "MentorAid API is running",
-            "timestamp": datetime.utcnow().isoformat(),
-        }
-    )
 
 
 @app.route("/api/model/info", methods=["GET"])

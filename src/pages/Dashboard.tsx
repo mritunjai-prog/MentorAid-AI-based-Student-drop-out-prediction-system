@@ -22,7 +22,7 @@ import { StudentTable } from "../components/dashboard/StudentTable";
 import { ChartsSection } from "../components/dashboard/ChartsSection";
 import { FileUpload } from "../components/dashboard/FileUpload";
 import { Student } from "../types/student";
-import { generateMockStudents } from "../data/mockData";
+import { studentAPI } from "../utils/api";
 import { toast } from "../components/ui/Toaster";
 
 export default function Dashboard() {
@@ -40,11 +40,40 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load mock data
-    const mockStudents = generateMockStudents(150);
-    setStudents(mockStudents);
-    setFilteredStudents(mockStudents);
-    setLoading(false);
+    // Load students from API
+    const fetchStudents = async () => {
+      try {
+        setLoading(true);
+        const response = await studentAPI.getAll();
+        const studentsData = (response.students || []).map((s: any) => ({
+          id: s._id,
+          name: s.name || "Unknown",
+          studentId: s.student_id || "N/A",
+          email: s.email || "N/A",
+          attendance: s.attendance || 0,
+          averageMarks: s.averageMarks || 0,
+          feeStatus: s.feeStatus || "paid",
+          riskLevel: (s.risk_level || "low").toLowerCase() as
+            | "low"
+            | "medium"
+            | "high",
+          department: s.department || "General",
+          class: s.class || "N/A",
+          riskScore: s.confidence ? Math.round(s.confidence * 100) : 0,
+        }));
+        setStudents(studentsData);
+        setFilteredStudents(studentsData);
+      } catch (error) {
+        console.error("Failed to fetch students:", error);
+        toast.error("Failed to load students");
+        // Fallback to empty array
+        setStudents([]);
+        setFilteredStudents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStudents();
   }, []);
 
   useEffect(() => {
@@ -82,16 +111,32 @@ export default function Dashboard() {
     navigate(`/student/${studentId}`);
   };
 
-  const handleFileUpload = (files: FileList) => {
-    toast.success(
-      `Successfully uploaded ${files.length} file(s). Processing data...`
-    );
+  const handleFileUpload = (predictions: any[], summary: any) => {
+    // Convert predictions to Student format with real MongoDB IDs
+    const newStudents: Student[] = predictions.map((pred) => ({
+      id: pred._id || pred.student_id, // Use MongoDB _id
+      name: pred.name || pred.student_id || "Unknown Student",
+      studentId: pred.student_id || "N/A",
+      email: pred.email || "N/A",
+      attendance: 0, // Will be updated with real data later
+      averageMarks: 0,
+      feeStatus: "paid" as const,
+      riskLevel: pred.risk_level.toLowerCase() as "low" | "medium" | "high",
+      department: "General",
+      class: `Year ${Math.floor(Math.random() * 4) + 1}`,
+      prediction: pred.prediction,
+      confidence: pred.confidence,
+      probabilities: pred.probabilities,
+    }));
+
+    setStudents(newStudents);
+    setFilteredStudents(newStudents);
     setShowUpload(false);
 
-    // Simulate processing
-    setTimeout(() => {
-      toast.success("Data integration complete! Dashboard updated.");
-    }, 2000);
+    toast.success(
+      `Successfully processed ${summary.total} students! ` +
+        `${summary.dropout} at high risk, ${summary.graduate} likely to graduate.`
+    );
   };
 
   const exportData = () => {

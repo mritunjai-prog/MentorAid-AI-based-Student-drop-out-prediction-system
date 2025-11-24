@@ -1,0 +1,21 @@
+{
+    "model_name": "Random Forest with SMOTE + Engineered Features",
+    "accuracy": 0.7536723163841808,
+    "n_features": 47,
+    "original_features": 28,
+    "engineered_features": 20,
+    "n_training_samples": 5301,
+    "n_test_samples": 885,
+    "hyperparameters": {
+        "n_estimators": 300,
+        "max_depth": 20,
+        "min_samples_split": 10,
+        "max_features": "sqrt"
+    },
+    "balancing_method": "SMOTE (k_neighbors=5)",
+    "target_classes": [
+        "Dropout",
+        "Enrolled",
+        "Graduate"
+    ]
+}

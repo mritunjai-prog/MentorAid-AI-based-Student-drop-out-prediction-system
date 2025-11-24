@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authAPI } from '../utils/api';
 
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'mentor' | 'teacher';
-  avatar?: string;
+  role: 'admin' | 'counselor' | 'teacher';
+  picture?: string;
 }
 
 interface AuthContextType {
@@ -13,8 +14,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  loginWithGoogle: () => Promise<void>;
-  loginWithApple: () => Promise<void>;
+  loginWithGoogle: (credential: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,79 +32,81 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored auth token
-    const token = localStorage.getItem('auth_token');
-    const userData = localStorage.getItem('user_data');
-    
+    // Check for stored auth token and validate
+    const token = localStorage.getItem('access_token');
+    const userData = localStorage.getItem('user');
+
     if (token && userData) {
       try {
-        setUser(JSON.parse(userData));
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+        
+        // Verify token is still valid
+        authAPI.getCurrentUser()
+          .then((data) => {
+            setUser(data);
+            localStorage.setItem('user', JSON.stringify(data));
+          })
+          .catch(() => {
+            // Token invalid, clear storage
+            logout();
+          });
       } catch (error) {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('user_data');
+        logout();
       }
     }
-    
+
     setLoading(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<void> => {
     setLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Mock user data based on email
-    const mockUser: User = {
-      id: '1',
-      email,
-      name: email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-      role: email.includes('admin') ? 'admin' : email.includes('mentor') ? 'mentor' : 'teacher',
-    };
-    
-    localStorage.setItem('auth_token', 'mock_jwt_token');
-    localStorage.setItem('user_data', JSON.stringify(mockUser));
-    setUser(mockUser);
-    setLoading(false);
+
+    try {
+      // For demo purposes - replace with actual backend call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const mockUser: User = {
+        id: '1',
+        email,
+        name: email.split('@')[0].replace(/[._]/g, ' '),
+        role: email.includes('admin') ? 'admin' : 'counselor',
+      };
+
+      localStorage.setItem('access_token', 'demo_token');
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      setUser(mockUser);
+    } catch (error) {
+      throw new Error('Login failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const loginWithGoogle = async (): Promise<void> => {
+  const loginWithGoogle = async (credential: string): Promise<void> => {
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const mockUser: User = {
-      id: '2',
-      email: 'user@gmail.com',
-      name: 'Google User',
-      role: 'mentor',
-    };
-    
-    localStorage.setItem('auth_token', 'mock_jwt_token');
-    localStorage.setItem('user_data', JSON.stringify(mockUser));
-    setUser(mockUser);
-    setLoading(false);
-  };
 
-  const loginWithApple = async (): Promise<void> => {
-    setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const mockUser: User = {
-      id: '3',
-      email: 'user@icloud.com',
-      name: 'Apple User',
-      role: 'teacher',
-    };
-    
-    localStorage.setItem('auth_token', 'mock_jwt_token');
-    localStorage.setItem('user_data', JSON.stringify(mockUser));
-    setUser(mockUser);
-    setLoading(false);
+    try {
+      const response = await authAPI.googleLogin(credential);
+
+      // Store tokens and user data
+      localStorage.setItem('access_token', response.access_token);
+      localStorage.setItem('refresh_token', response.refresh_token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+
+      setUser(response.user);
+    } catch (error: any) {
+      console.error('Google login error:', error);
+      throw new Error(error.response?.data?.error || 'Google login failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 
@@ -116,7 +118,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         loginWithGoogle,
-        loginWithApple,
       }}
     >
       {children}

@@ -1,3 +1,4 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,13 +8,13 @@ import {
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Introduction from "./pages/Introduction";
-// Temporarily using basic version to avoid ad blocker issues
-// import Introduction from './pages/Introduction.basic';
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import StudentDetails from "./pages/StudentDetails";
 import RiskPredictor from "./pages/RiskPredictor";
 import { Toaster } from "./components/ui/Toaster";
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -57,16 +58,18 @@ function AppRoutes() {
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <Router>
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-            <AppRoutes />
-            <Toaster />
-          </div>
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <ThemeProvider>
+        <AuthProvider>
+          <Router>
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+              <AppRoutes />
+              <Toaster />
+            </div>
+          </Router>
+        </AuthProvider>
+      </ThemeProvider>
+    </GoogleOAuthProvider>
   );
 }
 

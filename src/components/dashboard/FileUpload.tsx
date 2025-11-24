@@ -1,23 +1,37 @@
-import React, { useState, useRef } from 'react';
-import { Upload, X, File, CheckCircle } from 'lucide-react';
-import { toast } from '../ui/Toaster';
+import React, { useState, useRef } from "react";
+import { Upload, X, File, CheckCircle, AlertCircle } from "lucide-react";
+import { toast } from "../ui/Toaster";
+import { predictionAPI } from "../../utils/api";
+
+interface PredictionResult {
+  prediction: string;
+  confidence: number;
+  risk_level: string;
+  probabilities: {
+    Dropout: number;
+    Enrolled: number;
+    Graduate: number;
+  };
+  student_id?: string;
+}
 
 interface FileUploadProps {
   onClose: () => void;
-  onUpload: (files: FileList) => void;
+  onUpload: (results: PredictionResult[], summary: any) => void;
 }
 
 export function FileUpload({ onClose, onUpload }: FileUploadProps) {
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === "dragleave") {
       setDragActive(false);
     }
   };
@@ -26,47 +40,76 @@ export function FileUpload({ onClose, onUpload }: FileUploadProps) {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFiles(e.dataTransfer.files);
     }
   };
 
   const handleFiles = (fileList: FileList) => {
-    const validFiles = Array.from(fileList).filter(file => {
-      const validTypes = ['.csv', '.xlsx', '.xls'];
-      const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    const validFiles = Array.from(fileList).filter((file) => {
+      const validTypes = [".csv", ".xlsx", ".xls"];
+      const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
       return validTypes.includes(fileExtension);
     });
 
     if (validFiles.length !== fileList.length) {
-      toast.warning('Some files were skipped. Only CSV and Excel files are supported.');
+      toast.warning(
+        "Some files were skipped. Only CSV and Excel files are supported."
+      );
     }
 
-    setFiles(prevFiles => [...prevFiles, ...validFiles]);
+    setFiles((prevFiles) => [...prevFiles, ...validFiles]);
   };
 
   const removeFile = (index: number) => {
     setFiles(files.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (files.length === 0) {
-      toast.error('Please select at least one file to upload.');
+      toast.error("Please select at least one file to upload.");
       return;
     }
 
-    const fileList = new DataTransfer();
-    files.forEach(file => fileList.items.add(file));
-    onUpload(fileList.files);
+    setUploading(true);
+
+    try {
+      // For now, we'll only handle the first CSV file
+      const file = files[0];
+
+      if (!file.name.endsWith(".csv")) {
+        toast.error("Please upload a CSV file.");
+        setUploading(false);
+        return;
+      }
+
+      // Use the authenticated API client
+      const data = await predictionAPI.predictBatch(file);
+
+      toast.success(`Successfully processed ${data.summary.total} students!`);
+
+      // Pass results to parent component
+      onUpload(data.predictions, data.summary);
+      onClose();
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to upload and process file"
+      );
+    } finally {
+      setUploading(false);
+    }
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   return (
@@ -74,7 +117,9 @@ export function FileUpload({ onClose, onUpload }: FileUploadProps) {
       <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upload Student Data</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Upload Student Data
+            </h2>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -85,12 +130,15 @@ export function FileUpload({ onClose, onUpload }: FileUploadProps) {
 
           <div className="mb-6">
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Upload CSV or Excel files containing student attendance, marks, fees, and assessment data.
-              The system will automatically merge and process the information.
+              Upload CSV or Excel files containing student attendance, marks,
+              fees, and assessment data. The system will automatically merge and
+              process the information.
             </p>
-            
+
             <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-4">
-              <h3 className="font-medium text-blue-900 dark:text-blue-300 mb-2">Supported File Types:</h3>
+              <h3 className="font-medium text-blue-900 dark:text-blue-300 mb-2">
+                Supported File Types:
+              </h3>
               <ul className="text-sm text-blue-700 dark:text-blue-400 space-y-1">
                 <li>• Attendance sheets (.csv, .xlsx)</li>
                 <li>• Grade reports (.csv, .xlsx)</li>
@@ -104,8 +152,8 @@ export function FileUpload({ onClose, onUpload }: FileUploadProps) {
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
               dragActive
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                : 'border-gray-300 dark:border-gray-600'
+                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                : "border-gray-300 dark:border-gray-600"
             }`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
@@ -114,7 +162,7 @@ export function FileUpload({ onClose, onUpload }: FileUploadProps) {
           >
             <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <p className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              Drag and drop files here, or{' '}
+              Drag and drop files here, or{" "}
               <button
                 onClick={() => fileInputRef.current?.click()}
                 className="text-blue-600 hover:text-blue-700 underline"
@@ -139,15 +187,24 @@ export function FileUpload({ onClose, onUpload }: FileUploadProps) {
           {/* File List */}
           {files.length > 0 && (
             <div className="mt-6">
-              <h3 className="font-medium text-gray-900 dark:text-white mb-3">Selected Files ({files.length})</h3>
+              <h3 className="font-medium text-gray-900 dark:text-white mb-3">
+                Selected Files ({files.length})
+              </h3>
               <div className="space-y-2 max-h-40 overflow-y-auto">
                 {files.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                  >
                     <div className="flex items-center">
                       <File className="w-5 h-5 text-blue-600 mr-3" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">{file.name}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{formatFileSize(file.size)}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {file.name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {formatFileSize(file.size)}
+                        </p>
                       </div>
                     </div>
                     <button
@@ -172,10 +229,17 @@ export function FileUpload({ onClose, onUpload }: FileUploadProps) {
             </button>
             <button
               onClick={handleSubmit}
-              disabled={files.length === 0}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              disabled={files.length === 0 || uploading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
             >
-              Upload & Process
+              {uploading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Processing...
+                </>
+              ) : (
+                "Upload & Process"
+              )}
             </button>
           </div>
         </div>

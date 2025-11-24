@@ -1,0 +1,48 @@
+feature,importance
+Curricular units 2nd sem (approved),0.06855202474079117
+completion_rate,0.06582199164755632
+total_approved,0.06205653535533351
+avg_approved,0.05815004745954242
+avg_grade,0.046994399314101966
+total_failure_rate,0.04673143395894893
+failure_rate_sem2,0.04598675595524325
+Curricular units 2nd sem (grade),0.04551667205405032
+Curricular units 1st sem (approved),0.039304237171140934
+Tuition fees up to date,0.03371216931830718
+failure_rate_sem1,0.031919985666653064
+Curricular units 2nd sem (enrolled),0.029477746143520632
+financial_stability,0.02789152060945384
+Age at enrollment,0.027384934045314353
+Curricular units 1st sem (grade),0.02665436284301992
+Curricular units 1st sem (enrolled),0.02659769776022271
+Father's occupation,0.02183161468157911
+Mother's occupation,0.021596683983840417
+total_evaluations,0.02154850009687945
+Curricular units 1st sem (evaluations),0.020959898798532637
+Curricular units 2nd sem (evaluations),0.020778843380524464
+low_performer,0.0206378828699807
+grade_consistency,0.01994691632836027
+grade_improvement,0.018655849405065886
+parent_education_avg,0.017668119814982206
+parent_education_max,0.015360141755441077
+Mother's qualification,0.015011031328665058
+Father's qualification,0.013147528677688397
+is_traditional_age,0.010277312265700687
+Scholarship holder,0.009036164898379263
+Debtor,0.0072647166496547615
+is_mature_student,0.007252895856599317
+Gender,0.00704100162789763
+Curricular units 1st sem (credited),0.006159737542882831
+Curricular units 2nd sem (credited),0.005979305072057701
+Displaced,0.005681450867168301
+both_sems_failures,0.004934718537947747
+Previous qualification,0.004502931898291958
+Curricular units 1st sem (without evaluations),0.0041687544765025035
+Curricular units 2nd sem (without evaluations),0.004016607054053678
+Marital status,0.003475683115896969
+has_sem2_failures,0.0032648064617249793
+high_performer,0.002469702646177579
+has_sem1_failures,0.0021359195693784307
+Nacionality,0.0010484015842476173
+Educational special needs,0.0007611391521572754
+International,0.0006332255585405661

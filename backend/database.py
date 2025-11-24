@@ -3,9 +3,11 @@ MongoDB Database Connection and Models
 """
 
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi
 from datetime import datetime
 from bson import ObjectId
 import logging
+import ssl
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +16,13 @@ class Database:
     """MongoDB Database Manager"""
 
     def __init__(self, uri, db_name):
-        self.client = MongoClient(uri)
+        # Configure MongoDB connection with TLS/SSL settings
+        self.client = MongoClient(
+            uri,
+            server_api=ServerApi('1'),
+            tls=True,
+            tlsAllowInvalidCertificates=True  # For Render compatibility
+        )
         self.db = self.client[db_name]
         self.users = self.db.users
         self.predictions = self.db.predictions

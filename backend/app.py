@@ -305,6 +305,9 @@ def refresh():
 @jwt_required()
 def get_current_user():
     """Get current user info"""
+    if not user_model:
+        return jsonify({"error": "User service not available"}), 503
+    
     user_id = get_jwt_identity()
     user = user_model.find_by_id(user_id)
 

@@ -16,18 +16,19 @@ class Database:
     """MongoDB Database Manager"""
 
     def __init__(self, uri, db_name):
-        # Configure MongoDB connection with SSL certificate validation disabled
-        # This is necessary because Render's environment has SSL/TLS issues with MongoDB Atlas
+        # Configure MongoDB connection - remove query params that conflict with code params
         try:
+            # Clean the URI - remove tlsAllowInvalidCertificates from connection string
+            clean_uri = uri.split('?')[0]  # Get base URI without params
+            
             self.client = MongoClient(
-                uri,
+                clean_uri,
                 serverSelectionTimeoutMS=30000,
                 connectTimeoutMS=30000,
                 retryWrites=True,
                 w='majority',
                 tls=True,
-                tlsAllowInvalidCertificates=True,
-                tlsInsecure=True  # Disable hostname verification
+                tlsAllowInvalidCertificates=True  # Use this one parameter only
             )
             # Test the connection
             self.client.admin.command("ping")

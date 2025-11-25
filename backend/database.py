@@ -16,19 +16,14 @@ class Database:
     """MongoDB Database Manager"""
 
     def __init__(self, uri, db_name):
-        # Configure MongoDB connection - remove query params that conflict with code params
+        # Try multiple connection strategies for Render compatibility
         try:
-            # Clean the URI - remove tlsAllowInvalidCertificates from connection string
-            clean_uri = uri.split('?')[0]  # Get base URI without params
-            
+            # Strategy 1: Use the URI as-is with minimal options
+            # Let pymongo handle SSL automatically via the srv:// protocol
             self.client = MongoClient(
-                clean_uri,
-                serverSelectionTimeoutMS=30000,
-                connectTimeoutMS=30000,
-                retryWrites=True,
-                w='majority',
-                tls=True,
-                tlsAllowInvalidCertificates=True  # Use this one parameter only
+                uri,
+                serverSelectionTimeoutMS=10000,
+                connectTimeoutMS=10000,
             )
             # Test the connection
             self.client.admin.command("ping")
@@ -40,7 +35,9 @@ class Database:
             logger.info(f"✅ Connected to MongoDB: {db_name}")
         except Exception as e:
             logger.error(f"❌ MongoDB connection failed: {e}")
-            logger.error(f"Connection string: {uri.split('@')[1] if '@' in uri else 'invalid'}")
+            logger.error(
+                f"Connection string: {uri.split('@')[1] if '@' in uri else 'invalid'}"
+            )
             # Set to None to allow app to continue without DB
             self.client = None
             self.db = None

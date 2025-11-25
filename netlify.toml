@@ -9,3 +9,5 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  
+# Force rebuild - Nov 25, 2025

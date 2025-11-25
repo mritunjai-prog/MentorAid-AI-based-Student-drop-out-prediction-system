@@ -22,13 +22,6 @@ from datetime import datetime
 
 # Import our modules
 from config import Config
-from database import (
-    Database,
-    UserModel,
-    PredictionModel,
-    StudentModel,
-    InterventionModel,
-)
 from auth import verify_google_token, token_required
 
 # Setup logging
@@ -45,30 +38,64 @@ jwt = JWTManager(app)
 # Initialize CORS
 CORS(app, origins=Config.CORS_ORIGINS, supports_credentials=True)
 
-# Initialize Database
+# Initialize Database with fallback to SQLite
+db = None
+UserModel = None
+PredictionModel = None
+StudentModel = None
+InterventionModel = None
+
 try:
-    db = Database(Config.MONGODB_URI, Config.MONGODB_DB_NAME)
+    # Try MongoDB first
+    from database import (
+        Database as MongoDatabase,
+        UserModel as MongoUserModel,
+        PredictionModel as MongoPredictionModel,
+        StudentModel as MongoStudentModel,
+        InterventionModel as MongoInterventionModel,
+    )
+    db = MongoDatabase(Config.MONGODB_URI, Config.MONGODB_DB_NAME)
     if db.client is not None:
+        UserModel = MongoUserModel
+        PredictionModel = MongoPredictionModel
+        StudentModel = MongoStudentModel
+        InterventionModel = MongoInterventionModel
         user_model = UserModel(db)
         prediction_model = PredictionModel(db)
         student_model = StudentModel(db)
         intervention_model = InterventionModel(db)
-        logger.info("✅ Database models initialized successfully")
+        logger.info("✅ MongoDB connected and models initialized")
     else:
-        logger.warning("⚠️ Database connection failed, running without database")
+        raise Exception("MongoDB client is None")
+except Exception as mongo_error:
+    logger.warning(f"⚠️ MongoDB failed: {mongo_error}")
+    logger.info("🔄 Falling back to SQLite database...")
+    try:
+        from database_sqlite import (
+            Database as SQLiteDatabase,
+            UserModel as SQLiteUserModel,
+            PredictionModel as SQLitePredictionModel,
+            StudentModel as SQLiteStudentModel,
+            InterventionModel as SQLiteInterventionModel,
+        )
+        db = SQLiteDatabase()
+        UserModel = SQLiteUserModel
+        PredictionModel = SQLitePredictionModel
+        StudentModel = SQLiteStudentModel
+        InterventionModel = SQLiteInterventionModel
+        user_model = UserModel(db)
+        prediction_model = PredictionModel(db)
+        student_model = StudentModel(db)
+        intervention_model = InterventionModel(db)
+        logger.info("✅ SQLite database connected and models initialized")
+    except Exception as sqlite_error:
+        logger.error(f"❌ SQLite initialization also failed: {sqlite_error}")
+        logger.error(traceback.format_exc())
         db = None
         user_model = None
         prediction_model = None
         student_model = None
         intervention_model = None
-except Exception as e:
-    logger.error(f"❌ Database initialization failed: {e}")
-    logger.error(traceback.format_exc())
-    db = None
-    user_model = None
-    prediction_model = None
-    student_model = None
-    intervention_model = None
 
 # Load ML model artifacts
 MODEL_DIR = Path(__file__).parent.parent / "ml-models" / "trained_models"
@@ -205,7 +232,7 @@ def google_auth():
     """Authenticate user with Google OAuth token"""
     if not db:
         return jsonify({"error": "Database not available"}), 503
-        
+
     try:
         data = request.get_json()
         token = data.get("token")

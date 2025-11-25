@@ -252,6 +252,36 @@ class StudentModel:
 
         return [dict(row) for row in rows]
 
+    def get_all_students(self):
+        """Get all students (for compatibility with MongoDB interface)"""
+        cursor = self.db.conn.cursor()
+        cursor.execute("SELECT * FROM students ORDER BY uploaded_at DESC")
+        rows = cursor.fetchall()
+        return [dict(row) for row in rows]
+
+    def get_student(self, student_id):
+        """Get student by ID (alias for find_by_id for compatibility)"""
+        return self.find_by_id(student_id)
+
+    def create_or_update_student(self, student_data):
+        """Create or update a student, return student ID"""
+        # Check if student exists by student_id
+        cursor = self.db.conn.cursor()
+        cursor.execute(
+            "SELECT id FROM students WHERE student_id = ?",
+            (student_data.get("student_id"),)
+        )
+        existing = cursor.fetchone()
+
+        if existing:
+            # Update existing student
+            self.update_student(existing["id"], student_data)
+            return existing["id"]
+        else:
+            # Create new student
+            student = self.create_student(student_data)
+            return student["id"] if student else None
+
     def update_student(self, student_id, update_data):
         """Update student data"""
         fields = []
@@ -335,6 +365,20 @@ class PredictionModel:
             predictions.append(pred)
 
         return predictions
+
+    def save_batch_predictions(self, user_id, predictions):
+        """Save batch predictions (for compatibility with MongoDB interface)"""
+        for pred in predictions:
+            prediction_data = {
+                "user_id": user_id,
+                "student_id": pred.get("student_id"),
+                "prediction": pred.get("prediction"),
+                "probability": pred.get("confidence"),
+                "risk_level": pred.get("risk_level"),
+                "top_features": pred.get("top_features", []),
+            }
+            self.create_prediction(prediction_data)
+        return True
 
 
 class InterventionModel:

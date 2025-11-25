@@ -46,12 +46,12 @@ export default function Dashboard() {
         setLoading(true);
         const response = await studentAPI.getAll();
         const studentsData = (response.students || []).map((s: any) => ({
-          id: s._id,
+          id: s.id || s._id || s.student_id, // Handle both SQLite (id) and MongoDB (_id)
           name: s.name || "Unknown",
           studentId: s.student_id || "N/A",
           email: s.email || "N/A",
           attendance: s.attendance || 0,
-          averageMarks: s.averageMarks || 0,
+          averageMarks: s.averageMarks || s.marks || 0,
           feeStatus: s.feeStatus || "paid",
           riskLevel: (s.risk_level || "low").toLowerCase() as
             | "low"
@@ -59,7 +59,7 @@ export default function Dashboard() {
             | "high",
           department: s.department || "General",
           class: s.class || "N/A",
-          riskScore: s.confidence ? Math.round(s.confidence * 100) : 0,
+          riskScore: s.confidence ? Math.round(s.confidence * 100) : (s.risk_score || 0),
         }));
         setStudents(studentsData);
         setFilteredStudents(studentsData);
@@ -112,14 +112,14 @@ export default function Dashboard() {
   };
 
   const handleFileUpload = (predictions: any[], summary: any) => {
-    // Convert predictions to Student format with real MongoDB IDs
+    // Convert predictions to Student format with database IDs
     const newStudents: Student[] = predictions.map((pred) => ({
-      id: pred._id || pred.student_id, // Use MongoDB _id
+      id: pred.id || pred._id || pred.student_id, // Handle both SQLite and MongoDB
       name: pred.name || pred.student_id || "Unknown Student",
       studentId: pred.student_id || "N/A",
       email: pred.email || "N/A",
-      attendance: 0, // Will be updated with real data later
-      averageMarks: 0,
+      attendance: pred.attendance || 0,
+      averageMarks: pred.averageMarks || pred.marks || 0,
       feeStatus: "paid" as const,
       riskLevel: pred.risk_level.toLowerCase() as "low" | "medium" | "high",
       department: "General",
@@ -204,7 +204,9 @@ export default function Dashboard() {
           <div className="flex justify-between items-center py-3 md:py-4">
             <div className="flex items-center">
               <div className="h-8 w-8 md:h-10 md:w-10 bg-blue-600 rounded-xl flex items-center justify-center">
-                <span className="text-base md:text-lg font-bold text-white">M</span>
+                <span className="text-base md:text-lg font-bold text-white">
+                  M
+                </span>
               </div>
               <div className="ml-2 md:ml-4">
                 <h1 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white">

@@ -199,32 +199,32 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+          <div className="flex justify-between items-center py-3 md:py-4">
             <div className="flex items-center">
-              <div className="h-10 w-10 bg-blue-600 rounded-xl flex items-center justify-center">
-                <span className="text-lg font-bold text-white">M</span>
+              <div className="h-8 w-8 md:h-10 md:w-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                <span className="text-base md:text-lg font-bold text-white">M</span>
               </div>
-              <div className="ml-4">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <div className="ml-2 md:ml-4">
+                <h1 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white">
                   MentorAid
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 hidden sm:block">
                   Student Support Dashboard
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <div className="flex items-center space-x-2 md:space-x-4">
+              <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors hidden md:block">
                 <Bell className="w-5 h-5" />
               </button>
 
               <AnimatedThemeToggle />
 
-              <div className="flex items-center space-x-3">
-                <div className="text-right">
+              <div className="hidden sm:flex items-center space-x-3">
+                <div className="text-right hidden lg:block">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
                     {user?.name}
                   </p>
@@ -244,7 +244,7 @@ export default function Dashboard() {
                 className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                 title="Logout"
               >
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-4 h-4 md:w-5 md:h-5" />
               </button>
             </div>
           </div>
@@ -252,33 +252,35 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
         {/* Stats Overview */}
         <DashboardStats stats={stats} />
 
         {/* Controls */}
-        <div className="mb-8 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div className="flex-1 max-w-md">
+        <div className="mb-6 md:mb-8 bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col gap-4">
+            {/* Search Bar */}
+            <div className="w-full">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
                 <input
                   type="text"
                   placeholder="Search students..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  className="w-full pl-9 md:pl-10 pr-4 py-2 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 />
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            {/* Filters - Mobile: Stacked, Desktop: Row */}
+            <div className="flex flex-col sm:flex-row gap-3">
               <select
                 value={filters.riskLevel}
                 onChange={(e) =>
                   setFilters((prev) => ({ ...prev, riskLevel: e.target.value }))
                 }
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-sm"
+                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-sm"
               >
                 <option value="all">All Risk Levels</option>
                 <option value="high">High Risk</option>
@@ -291,7 +293,7 @@ export default function Dashboard() {
                 onChange={(e) =>
                   setFilters((prev) => ({ ...prev, class: e.target.value }))
                 }
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-sm"
+                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-sm"
               >
                 <option value="all">All Classes</option>
                 <option value="10A">10A</option>
@@ -301,10 +303,13 @@ export default function Dashboard() {
                 <option value="12A">12A</option>
                 <option value="12B">12B</option>
               </select>
+            </div>
 
+            {/* Action Buttons - Mobile: Full Width */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <button
                 onClick={() => navigate("/risk-predictor")}
-                className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-semibold"
+                className="flex items-center justify-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-semibold"
               >
                 <Calculator className="w-4 h-4 mr-2" />
                 Risk Predictor
@@ -312,7 +317,7 @@ export default function Dashboard() {
 
               <button
                 onClick={exportData}
-                className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                className="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Export CSV
@@ -320,7 +325,7 @@ export default function Dashboard() {
 
               <button
                 onClick={() => setShowUpload(true)}
-                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:col-span-2 lg:col-span-1"
               >
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Data

@@ -59,24 +59,24 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
       {statCards.map((stat, index) => (
-        <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+        <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.title}</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{stat.value}</p>
-              <div className="flex items-center mt-2">
-                <span className={`text-sm font-medium ${
+            <div className="flex-1 min-w-0">
+              <p className="text-xs md:text-sm font-medium text-gray-600 dark:text-gray-400 truncate">{stat.title}</p>
+              <p className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mt-1 md:mt-2">{stat.value}</p>
+              <div className="flex items-center mt-1 md:mt-2">
+                <span className={`text-xs md:text-sm font-medium ${
                   stat.changeType === 'positive' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                 }`}>
                   {stat.change}
                 </span>
-                <span className="text-sm text-gray-600 dark:text-gray-400 ml-1">from last month</span>
+                <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400 ml-1 hidden sm:inline">from last month</span>
               </div>
             </div>
-            <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-              <stat.icon className={`w-6 h-6 ${stat.color}`} />
+            <div className={`p-2 md:p-3 rounded-lg ${stat.bgColor} flex-shrink-0`}>
+              <stat.icon className={`w-5 h-5 md:w-6 md:h-6 ${stat.color}`} />
             </div>
           </div>
         </div>

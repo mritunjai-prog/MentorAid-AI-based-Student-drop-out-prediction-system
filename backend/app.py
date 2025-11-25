@@ -54,6 +54,7 @@ try:
         StudentModel as MongoStudentModel,
         InterventionModel as MongoInterventionModel,
     )
+
     db = MongoDatabase(Config.MONGODB_URI, Config.MONGODB_DB_NAME)
     if db.client is not None:
         UserModel = MongoUserModel
@@ -78,6 +79,7 @@ except Exception as mongo_error:
             StudentModel as SQLiteStudentModel,
             InterventionModel as SQLiteInterventionModel,
         )
+
         db = SQLiteDatabase()
         UserModel = SQLiteUserModel
         PredictionModel = SQLitePredictionModel
@@ -251,28 +253,26 @@ def google_auth():
 
         if not user:
             # Create new user
-            user = user_model.create_user(
-                email=user_info["email"],
-                name=user_info["name"],
-                google_id=user_info["google_id"],
-                picture=user_info["picture"],
-            )
+            user = user_model.create_user(user_info)
             logger.info(f"New user created: {user['email']}")
         else:
             # Update last login
-            user_model.update_last_login(user["email"])
+            user_id = str(user.get("_id") or user.get("id"))
+            user_model.update_last_login(user_id)
             logger.info(f"User logged in: {user['email']}")
 
         # Create JWT tokens
-        access_token = create_access_token(identity=str(user["_id"]))
-        refresh_token = create_refresh_token(identity=str(user["_id"]))
+        # Handle both MongoDB (_id) and SQLite (id) formats
+        user_id = str(user.get("_id") or user.get("id"))
+        access_token = create_access_token(identity=user_id)
+        refresh_token = create_refresh_token(identity=user_id)
 
         return jsonify(
             {
                 "access_token": access_token,
                 "refresh_token": refresh_token,
                 "user": {
-                    "id": str(user["_id"]),
+                    "id": user_id,
                     "email": user["email"],
                     "name": user["name"],
                     "picture": user.get("picture"),
@@ -313,7 +313,7 @@ def get_current_user():
 
     return jsonify(
         {
-            "id": user["_id"],
+            "id": str(user.get("_id") or user.get("id")),
             "email": user["email"],
             "name": user["name"],
             "picture": user.get("picture"),
@@ -500,9 +500,9 @@ def predict_batch():
                     "confidence": result["confidence"],
                     "probabilities": result["probabilities"],
                 }
-                mongo_id = student_model.create_or_update_student(student_data)
-                # Add MongoDB ID to result
-                result["_id"] = str(mongo_id)
+                student_id = student_model.create_or_update_student(student_data)
+                # Add database ID to result (works for both MongoDB and SQLite)
+                result["id"] = str(student_id) if student_id else None
 
         # Calculate summary statistics
         dropout_count = sum(1 for r in results if r["prediction"] == "Dropout")

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Sparkles, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import {
   generateChatResponse,
   quickActions,
@@ -19,6 +20,7 @@ interface ChatBotProps {
 }
 
 export default function ChatBot({ context }: ChatBotProps) {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -91,6 +93,31 @@ export default function ChatBot({ context }: ChatBotProps) {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
+
+      // Auto-navigate based on response content
+      setTimeout(() => {
+        if (
+          response.toLowerCase().includes("check dropout") ||
+          response.toLowerCase().includes("student card") ||
+          response.toLowerCase().includes("view their risk")
+        ) {
+          navigate("/dashboard");
+        } else if (response.toLowerCase().includes("upload csv")) {
+          navigate("/dashboard");
+          // Trigger file upload modal after navigation
+          setTimeout(() => {
+            const uploadButton = document.querySelector(
+              "[data-upload-trigger]"
+            ) as HTMLButtonElement;
+            if (uploadButton) uploadButton.click();
+          }, 500);
+        } else if (
+          response.toLowerCase().includes("risk predictor") ||
+          response.toLowerCase().includes("quick assessment")
+        ) {
+          navigate("/risk-predictor");
+        }
+      }, 2000); // Wait 2 seconds for user to read response
     } catch (error) {
       console.error("Chat error:", error);
       const errorMessage: ChatMessage = {

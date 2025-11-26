@@ -43,16 +43,16 @@ export const quickActions: QuickAction[] = [
     prompt: "How do I upload multiple students using CSV?",
   },
   {
+    id: "risk-predictor",
+    label: "Risk Predictor",
+    icon: "🎯",
+    prompt: "I want to use the quick risk predictor tool",
+  },
+  {
     id: "view-insights",
     label: "View Insights",
     icon: "💡",
     prompt: "Show me the key insights about at-risk students",
-  },
-  {
-    id: "interventions",
-    label: "Interventions",
-    icon: "🎯",
-    prompt: "What interventions can I implement for at-risk students?",
   },
 ];
 
@@ -80,7 +80,7 @@ Communication Style:
 - Be friendly, helpful, and concise
 - Use emojis occasionally for engagement
 - Provide actionable steps with clear instructions
-- When suggesting navigation, use format: "[Click here to {action}]"
+- When suggesting navigation, end with: "✨ Taking you to [page] now..." or "✨ Redirecting you now..."
 - Keep responses under 150 words unless explaining complex topics
 
 Key Features to Highlight:
@@ -89,6 +89,12 @@ Key Features to Highlight:
 - Student Details: Individual student insights, intervention history
 - AI Predictions: 76.61% accuracy Random Forest model
 - Risk Levels: Low (green), Medium (yellow), High (red)
+
+Auto-Navigation Triggers:
+- When user asks about "check dropout" or "predict risk" → End with "✨ Taking you to the Dashboard now..."
+- When user asks about "upload CSV" → End with "✨ Taking you to the Dashboard now..."
+- When user asks about "risk predictor" or "quick assessment" → End with "✨ Taking you to the Risk Predictor now..."
+- This triggers automatic page navigation
 
 Rules:
 - Never make up statistics or student data
@@ -105,11 +111,11 @@ const getRuleBasedResponse = (message: string): string => {
     lowerMessage.includes("dropout") &&
     (lowerMessage.includes("check") || lowerMessage.includes("predict"))
   ) {
-    return "📊 To check a student's dropout risk:\n\n1. Go to Dashboard\n2. Click on any student card\n3. View their risk percentage and AI insights\n\nOr upload a CSV with student data for batch predictions! [Upload CSV]";
+    return "📊 To check a student's dropout risk:\n\n1. Go to Dashboard\n2. Click on any student card\n3. View their risk percentage and AI insights\n\n✨ Taking you to the Dashboard now...";
   }
 
   if (lowerMessage.includes("upload") || lowerMessage.includes("csv")) {
-    return "📤 To upload students via CSV:\n\n1. Click the 'Upload CSV' button on Dashboard\n2. Select your CSV file (must include: attendance, marks, class, etc.)\n3. Click 'Predict All Students'\n4. View results instantly!\n\nYou can upload up to 1000 students at once. Need a sample CSV? Check the documentation!";
+    return "📤 To upload students via CSV:\n\n1. Click the 'Upload CSV' button on Dashboard\n2. Select your CSV file (must include: attendance, marks, class, etc.)\n3. Click 'Predict All Students'\n4. View results instantly!\n\n✨ Taking you to the Dashboard now...";
   }
 
   if (lowerMessage.includes("intervention")) {
@@ -131,6 +137,14 @@ const getRuleBasedResponse = (message: string): string => {
     lowerMessage.includes("high")
   ) {
     return "🎯 Risk Level Meanings:\n\n🟢 Low Risk (0-33%): Student is on track, minimal intervention needed\n\n🟡 Medium Risk (34-66%): Monitor closely, consider preventive interventions\n\n🔴 High Risk (67-100%): Immediate attention required, implement comprehensive support\n\nRisk is calculated using 47 features including grades, attendance, and engagement!";
+  }
+
+  if (
+    lowerMessage.includes("risk predictor") ||
+    lowerMessage.includes("quick assessment") ||
+    lowerMessage.includes("predictor tool")
+  ) {
+    return "🎯 Quick Risk Predictor Tool!\n\nUse this for fast, simplified risk assessments. Just enter:\n- Student name & ID\n- Attendance %\n- Average marks\n- Fee status\n\nGet instant predictions with recommendations!\n\n✨ Taking you to the Risk Predictor now...";
   }
 
   if (lowerMessage.includes("dashboard") || lowerMessage.includes("navigate")) {
@@ -174,7 +188,10 @@ export const generateChatResponse = async (
     const conversationHistory =
       context.chatHistory
         ?.slice(-5)
-        .map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`)
+        .map(
+          (msg) =>
+            `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
+        )
         .join("\n") || "";
 
     const prompt = `${getSystemPrompt(context)}

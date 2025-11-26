@@ -56,6 +56,7 @@ class Database:
                 phone TEXT,
                 attendance REAL,
                 marks REAL,
+                averageMarks REAL,
                 extracurricular_score REAL,
                 socioeconomic_status TEXT,
                 family_support TEXT,
@@ -70,6 +71,14 @@ class Database:
             )
         """
         )
+        
+        # Migration: Add averageMarks column if it doesn't exist
+        try:
+            cursor.execute("ALTER TABLE students ADD COLUMN averageMarks REAL")
+            self.conn.commit()
+        except sqlite3.OperationalError:
+            # Column already exists
+            pass
 
         # Predictions table
         cursor.execute(

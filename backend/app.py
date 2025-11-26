@@ -19,6 +19,7 @@ from pathlib import Path
 import traceback
 import logging
 from datetime import datetime
+from waitress import serve
 
 # Import our modules
 from config import Config
@@ -206,6 +207,10 @@ def engineer_features(df):
 
 def preprocess_data(df):
     """Preprocess student data for prediction"""
+    # Fix column name typo in the model's feature names
+    if "Nationality" in df.columns:
+        df = df.rename(columns={"Nationality": "Nacionality"})
+
     df = engineer_features(df)
 
     # Drop non-predictive features
@@ -492,12 +497,16 @@ def predict_batch():
                     "email": row.get("Email", f"student{i+1}@university.edu"),
                     "attendance": attendance,
                     "averageMarks": avg_marks,
-                    "class": "N/A",
-                    "department": "General",
-                    "feeStatus": row.get("Tuition fees up to date", 1) == 1
-                    and row.get("Debtor", 0) == 0
-                    and "paid"
-                    or "pending",
+                    "class": row.get("class", "N/A"),
+                    "department": row.get("department", "General"),
+                    "feeStatus": (
+                        "paid"
+                        if (
+                            row.get("Tuition fees up to date", 1) == 1
+                            and row.get("Debtor", 0) == 0
+                        )
+                        else "pending"
+                    ),
                     "prediction": result["prediction"],
                     "risk_level": result["risk_level"],
                     "confidence": result["confidence"],
@@ -704,4 +713,5 @@ if __name__ == "__main__":
     print("   POST /api/interventions      - Create intervention")
     print("\n" + "=" * 70)
 
-    app.run(debug=Config.DEBUG, host="0.0.0.0", port=5000)
+    logger.info("🚀 Starting server with Waitress on http://localhost:5000")
+    serve(app, host="127.0.0.1", port=5000, threads=4)

@@ -71,13 +71,50 @@ class Database:
             )
         """
         )
-        
+
         # Migration: Add averageMarks column if it doesn't exist
         try:
             cursor.execute("ALTER TABLE students ADD COLUMN averageMarks REAL")
             self.conn.commit()
         except sqlite3.OperationalError:
             # Column already exists
+            pass
+
+        # Migration: Add class, department, feeStatus columns
+        try:
+            cursor.execute("ALTER TABLE students ADD COLUMN class TEXT")
+            self.conn.commit()
+        except sqlite3.OperationalError:
+            pass
+
+        try:
+            cursor.execute("ALTER TABLE students ADD COLUMN department TEXT")
+            self.conn.commit()
+        except sqlite3.OperationalError:
+            pass
+
+        try:
+            cursor.execute("ALTER TABLE students ADD COLUMN feeStatus TEXT")
+            self.conn.commit()
+        except sqlite3.OperationalError:
+            pass
+
+        try:
+            cursor.execute("ALTER TABLE students ADD COLUMN prediction TEXT")
+            self.conn.commit()
+        except sqlite3.OperationalError:
+            pass
+
+        try:
+            cursor.execute("ALTER TABLE students ADD COLUMN confidence REAL")
+            self.conn.commit()
+        except sqlite3.OperationalError:
+            pass
+
+        try:
+            cursor.execute("ALTER TABLE students ADD COLUMN probabilities TEXT")
+            self.conn.commit()
+        except sqlite3.OperationalError:
             pass
 
         # Predictions table
@@ -202,18 +239,26 @@ class StudentModel:
     def create_student(self, student_data):
         """Create a new student"""
         from uuid import uuid4
+        import json
 
         student_id = str(uuid4())
         cursor = self.db.conn.cursor()
+
+        # Convert probabilities dict to JSON string if present
+        probabilities = student_data.get("probabilities")
+        if probabilities and isinstance(probabilities, dict):
+            probabilities = json.dumps(probabilities)
 
         cursor.execute(
             """
             INSERT INTO students (
                 id, user_id, student_id, name, email, phone,
-                attendance, marks, extracurricular_score, socioeconomic_status,
+                attendance, marks, averageMarks, extracurricular_score, socioeconomic_status,
                 family_support, mental_health_score, previous_failures,
-                study_hours, peer_influence, risk_score, risk_level, uploaded_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                study_hours, peer_influence, risk_score, risk_level, 
+                class, department, feeStatus, prediction, confidence, probabilities,
+                uploaded_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
             (
                 student_id,
@@ -224,6 +269,7 @@ class StudentModel:
                 student_data.get("phone"),
                 student_data.get("attendance"),
                 student_data.get("marks"),
+                student_data.get("averageMarks"),
                 student_data.get("extracurricular_score"),
                 student_data.get("socioeconomic_status"),
                 student_data.get("family_support"),
@@ -233,6 +279,12 @@ class StudentModel:
                 student_data.get("peer_influence"),
                 student_data.get("risk_score"),
                 student_data.get("risk_level"),
+                student_data.get("class"),
+                student_data.get("department"),
+                student_data.get("feeStatus"),
+                student_data.get("prediction"),
+                student_data.get("confidence"),
+                probabilities,
                 datetime.utcnow().isoformat(),
             ),
         )
@@ -293,11 +345,16 @@ class StudentModel:
 
     def update_student(self, student_id, update_data):
         """Update student data"""
+        import json
+
         fields = []
         values = []
 
         for key, value in update_data.items():
             if key not in ["id", "user_id", "student_id", "uploaded_at"]:
+                # Convert probabilities dict to JSON string
+                if key == "probabilities" and isinstance(value, dict):
+                    value = json.dumps(value)
                 fields.append(f"{key} = ?")
                 values.append(value)
 

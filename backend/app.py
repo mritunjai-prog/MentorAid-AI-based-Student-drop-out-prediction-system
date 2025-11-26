@@ -504,8 +504,15 @@ def predict_batch():
                     "probabilities": result["probabilities"],
                 }
                 student_id = student_model.create_or_update_student(student_data)
-                # Add database ID to result (works for both MongoDB and SQLite)
+                # Add database ID and display fields to result (works for both MongoDB and SQLite)
                 result["id"] = str(student_id) if student_id else None
+                result["name"] = student_data["name"]
+                result["email"] = student_data["email"]
+                result["attendance"] = attendance
+                result["averageMarks"] = avg_marks
+                result["feeStatus"] = student_data["feeStatus"]
+                result["class"] = student_data["class"]
+                result["department"] = student_data["department"]
 
         # Calculate summary statistics
         dropout_count = sum(1 for r in results if r["prediction"] == "Dropout")

@@ -269,7 +269,7 @@ class StudentModel:
         cursor = self.db.conn.cursor()
         cursor.execute(
             "SELECT id FROM students WHERE student_id = ?",
-            (student_data.get("student_id"),)
+            (student_data.get("student_id"),),
         )
         existing = cursor.fetchone()
 

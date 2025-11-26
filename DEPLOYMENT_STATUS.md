@@ -8,18 +8,22 @@
 ## Latest Fixes Applied (Nov 25, 2025)
 
 ### MongoDB Connection Issues
+
 **Problem:** SSL handshake errors preventing database connection on Render
 
 **Fixes Applied:**
+
 1. Simplified MongoDB connection settings (removed problematic TLS/SSL options)
 2. Increased connection timeouts from 5s to 30s
 3. Better error handling - app continues to run even if DB connection fails
 4. Added graceful degradation - models initialized as None when DB unavailable
 
-### Google Authentication Issues  
+### Google Authentication Issues
+
 **Problem:** Google OAuth not working, unable to authenticate users
 
 **Fixes Applied:**
+
 1. Added database availability check before Google auth
 2. Convert ObjectId to string for proper JSON serialization
 3. Better error logging with stack traces
@@ -27,21 +31,26 @@
 5. Proper error messages returned to frontend
 
 ### Code Changes
+
 **Files Modified:**
+
 - `backend/database.py` - Simplified MongoDB connection with better error handling
 - `backend/app.py` - Added database checks and improved Google OAuth error handling
 
 ## Current Status
 
 ### ✅ Working Features
+
 - Frontend deployment on Netlify
-- Backend deployment on Render  
+- Backend deployment on Render
 - ML models loaded successfully (Random Forest with 76.61% accuracy)
 - Health check endpoint operational
 - CORS configured for production
 
 ### ⚠️ Known Issues
+
 1. **MongoDB Connection:** May experience intermittent SSL errors on Render
+
    - **Impact:** Google authentication and data persistence affected
    - **Workaround:** App continues to run, ML predictions still work locally
    - **Solution:** Monitor Render logs for successful connection after deployment
@@ -53,12 +62,15 @@
 ## Testing Steps
 
 1. **Test Backend Health:**
+
    ```
    curl https://mentoraid-ai-based-student-drop-out.onrender.com/api/health
    ```
+
    Expected: `{"status": "healthy", "database": "connected", "ml_models": "loaded"}`
 
 2. **Test Frontend:**
+
    - Visit: https://mentoraid.netlify.app
    - Click "Sign in with Google"
    - Check browser console for errors
@@ -71,10 +83,12 @@
 ## Environment Variables
 
 ### Netlify (Frontend)
+
 - `VITE_GOOGLE_CLIENT_ID` = 284543669595-3bat01kl1t0g0uh41fgatmcbl7hv3cla.apps.googleusercontent.com
 - `VITE_API_URL` = https://mentoraid-ai-based-student-drop-out.onrender.com/api
 
 ### Render (Backend)
+
 - `MONGODB_URI` = MongoDB Atlas connection string
 - `GOOGLE_CLIENT_ID` = Google OAuth client ID
 - `GOOGLE_CLIENT_SECRET` = Google OAuth client secret
@@ -92,6 +106,7 @@
 ## Rollback Plan
 
 If issues persist:
+
 ```bash
 git revert 0f6b452  # Revert latest MongoDB fixes
 git push origin main

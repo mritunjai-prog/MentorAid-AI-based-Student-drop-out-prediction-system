@@ -21,6 +21,7 @@ import { DashboardStats } from "../components/dashboard/DashboardStats";
 import { StudentTable } from "../components/dashboard/StudentTable";
 import { ChartsSection } from "../components/dashboard/ChartsSection";
 import { FileUpload } from "../components/dashboard/FileUpload";
+import ChatBot from "../components/ui/ChatBot";
 import { Student } from "../types/student";
 import { studentAPI } from "../utils/api";
 import { toast } from "../components/ui/Toaster";
@@ -59,7 +60,9 @@ export default function Dashboard() {
             | "high",
           department: s.department || "General",
           class: s.class || "N/A",
-          riskScore: s.confidence ? Math.round(s.confidence * 100) : (s.risk_score || 0),
+          riskScore: s.confidence
+            ? Math.round(s.confidence * 100)
+            : s.risk_score || 0,
         }));
         setStudents(studentsData);
         setFilteredStudents(studentsData);
@@ -353,6 +356,20 @@ export default function Dashboard() {
           onUpload={handleFileUpload}
         />
       )}
+
+      {/* AI Chatbot */}
+      <ChatBot
+        context={{
+          page: "Dashboard",
+          userRole: "Teacher",
+          stats: {
+            total: students.length,
+            highRisk: students.filter((s) => s.riskLevel === "high").length,
+            mediumRisk: students.filter((s) => s.riskLevel === "medium").length,
+            lowRisk: students.filter((s) => s.riskLevel === "low").length,
+          },
+        }}
+      />
     </div>
   );
 }

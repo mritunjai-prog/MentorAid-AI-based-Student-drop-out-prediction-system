@@ -5,11 +5,13 @@
 1. **Go to Render**: Visit [https://render.com](https://render.com) and sign up/login with GitHub
 
 2. **Create New Web Service**:
+
    - Click **"New +"** → **"Web Service"**
    - Connect your GitHub repository: `MentorAid-AI-based-Student-drop-out-prediction-system`
    - Select the repository
 
 3. **Configure the service**:
+
    - **Name**: `mentoraid-backend`
    - **Region**: Choose closest to you
    - **Branch**: `main`
@@ -19,6 +21,7 @@
    - **Start Command**: `gunicorn app:app`
 
 4. **Add Environment Variables** (click "Advanced" → "Add Environment Variable"):
+
    ```
    MONGODB_URI=<your-mongodb-atlas-connection-string>
    JWT_SECRET_KEY=<generate-a-strong-random-secret-key>
@@ -27,8 +30,9 @@
    GOOGLE_CLIENT_SECRET=<your-google-oauth-client-secret>
    FLASK_ENV=production
    ```
-   
+
    **Get your actual values from:**
+
    - MongoDB URI: From `backend/.env` file
    - Google OAuth: From `backend/.env` file or Google Cloud Console
    - JWT Secrets: Generate new random strings for production
@@ -40,11 +44,13 @@
 ## After Backend is Deployed
 
 1. **Update Netlify environment variable**:
+
    - Go to: https://app.netlify.com/sites/mentoraid/configuration/env
    - Update `VITE_API_URL` to: `https://mentoraid-backend.onrender.com/api`
    - Redeploy frontend
 
 2. **Update backend CORS**:
+
    - Your backend already has CORS configured for production
 
 3. **Test the deployment**:
@@ -61,6 +67,7 @@
 ## Alternative: Deploy Backend to Railway
 
 If you prefer Railway:
+
 1. Go to [railway.app](https://railway.app)
 2. Click "Start a New Project" → "Deploy from GitHub repo"
 3. Select your repository

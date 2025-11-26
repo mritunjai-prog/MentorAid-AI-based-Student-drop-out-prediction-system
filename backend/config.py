@@ -31,4 +31,6 @@ class Config:
 
     # CORS - Allow both local and production URLs
     FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
-    CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173,https://mentoraid.netlify.app").split(",")
+    CORS_ORIGINS = os.getenv(
+        "CORS_ORIGINS", "http://localhost:5173,https://mentoraid.netlify.app"
+    ).split(",")

@@ -18,6 +18,7 @@ import { AIInsights } from "../components/student/AIInsights";
 import { InterventionHistory } from "../components/student/InterventionHistory";
 import { StudentMetrics } from "../components/student/StudentMetrics";
 import { ProgressChart } from "../components/student/ProgressChart";
+import ChatBot from "../components/ui/ChatBot";
 
 export default function StudentDetails() {
   const { id } = useParams<{ id: string }>();
@@ -205,6 +206,21 @@ export default function StudentDetails() {
         )}
         {activeTab === "progress" && <ProgressChart student={student} />}
       </div>
+
+      {/* AI Chatbot */}
+      <ChatBot
+        context={{
+          page: "Student Details",
+          userRole: "Teacher",
+          stats: {
+            studentName: student.name,
+            riskLevel: student.riskLevel,
+            riskScore: student.riskScore,
+            attendance: student.attendance,
+            averageMarks: student.averageMarks,
+          },
+        }}
+      />
     </div>
   );
 }

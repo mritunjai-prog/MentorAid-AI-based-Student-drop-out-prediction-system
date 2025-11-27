@@ -19,7 +19,14 @@ from pathlib import Path
 import traceback
 import logging
 from datetime import datetime
-from waitress import serve
+import os
+
+# Try to import waitress for local development
+try:
+    from waitress import serve
+    WAITRESS_AVAILABLE = True
+except ImportError:
+    WAITRESS_AVAILABLE = False
 
 # Import our modules
 from config import Config
@@ -713,5 +720,12 @@ if __name__ == "__main__":
     print("   POST /api/interventions      - Create intervention")
     print("\n" + "=" * 70)
 
-    logger.info("🚀 Starting server with Waitress on http://localhost:5000")
-    serve(app, host="127.0.0.1", port=5000, threads=4)
+    # Use Waitress for local development, Flask's built-in server as fallback
+    # In production (Render), Gunicorn will be used instead
+    if WAITRESS_AVAILABLE and os.getenv("FLASK_ENV") != "production":
+        logger.info("🚀 Starting server with Waitress on http://localhost:5000")
+        serve(app, host="127.0.0.1", port=5000, threads=4)
+    else:
+        # Production mode - let Gunicorn handle this
+        logger.info("🚀 App initialized for production (Gunicorn)")
+        # Don't call app.run() in production - Gunicorn will import and run the app

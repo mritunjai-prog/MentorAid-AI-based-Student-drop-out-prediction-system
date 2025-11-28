@@ -7,23 +7,28 @@ MentorBot is an intelligent AI assistant integrated into MentorAid that provides
 ## Features
 
 ### ✨ **Intelligent AI Responses**
+
 - **Google Gemini Integration**: Uses Gemini Pro for natural language understanding
 - **Context-Aware**: Knows which page you're on and adapts responses
 - **Fallback System**: Works offline with rule-based responses when API is unavailable
 
 ### 🎯 **Quick Actions**
+
 Four pre-defined buttons for common tasks:
+
 1. **Check Dropout Risk** - Guide on checking student predictions
 2. **Upload Students** - Instructions for CSV batch upload
 3. **View Insights** - Get AI-powered insights about at-risk students
 4. **Interventions** - Suggested intervention strategies
 
 ### 💾 **Chat History**
+
 - Automatic saving to localStorage
 - Persistent across sessions
 - Clear chat option available
 
 ### 🎨 **Beautiful UI**
+
 - Floating chat button with pulse animation
 - Smooth animations with Framer Motion
 - Dark mode support
@@ -60,11 +65,13 @@ src/
 ### Environment Setup
 
 Add to `.env`:
+
 ```env
 VITE_GEMINI_API_KEY=your_api_key_here
 ```
 
 **Get your free API key:**
+
 1. Visit: https://makersuite.google.com/app/apikey
 2. Sign in with Google account
 3. Click "Create API Key"
@@ -89,36 +96,40 @@ import ChatBot from "../components/ui/ChatBot";
       lowRisk: 85,
     },
   }}
-/>
+/>;
 ```
 
 ### Context Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `page` | string | Current page name (Dashboard, Student Details, etc.) |
-| `userRole` | string | User's role (Teacher, Admin) |
-| `stats` | object | Relevant statistics for AI context |
+| Property   | Type   | Description                                          |
+| ---------- | ------ | ---------------------------------------------------- |
+| `page`     | string | Current page name (Dashboard, Student Details, etc.) |
+| `userRole` | string | User's role (Teacher, Admin)                         |
+| `stats`    | object | Relevant statistics for AI context                   |
 
 ## Chatbot Capabilities
 
 ### What It Can Do
 
 ✅ **Navigation Guidance**
+
 - "How do I check dropout risk?"
 - "Where can I upload CSV files?"
 - "Show me the dashboard"
 
 ✅ **Feature Explanations**
+
 - "What does risk level mean?"
 - "How accurate is the ML model?"
 - "What are the intervention options?"
 
 ✅ **Context-Specific Help**
+
 - On Dashboard: Provides stats overview, upload help
 - On Student Details: Gives insights about specific student
 
 ✅ **Technical Questions**
+
 - "How does the AI model work?"
 - "What features are used for prediction?"
 - "What's the accuracy rate?"
@@ -126,6 +137,7 @@ import ChatBot from "../components/ui/ChatBot";
 ### Sample Conversations
 
 **Example 1: New User**
+
 ```
 User: Hi
 Bot: 👋 Hello! I'm MentorBot, your AI guide for MentorAid!
@@ -140,6 +152,7 @@ What would you like to do today?
 ```
 
 **Example 2: Checking Dropout**
+
 ```
 User: How do I check a student's dropout percentage?
 Bot: 📊 To check a student's dropout risk:
@@ -152,6 +165,7 @@ Or upload a CSV with student data for batch predictions! [Upload CSV]
 ```
 
 **Example 3: Interventions**
+
 ```
 User: What interventions work best?
 Bot: 🎯 Recommended interventions for at-risk students:
@@ -193,12 +207,12 @@ When Gemini API is unavailable or no API key is provided:
 ```typescript
 const getRuleBasedResponse = (message: string): string => {
   const lowerMessage = message.toLowerCase();
-  
+
   if (lowerMessage.includes("dropout")) {
     return "📊 To check dropout risk: ...";
   }
   // ... more rules
-}
+};
 ```
 
 ### Response Flow
@@ -249,11 +263,11 @@ Edit `ChatBot.tsx`:
 
 ```tsx
 // Change floating button gradient
-className="... bg-gradient-to-r from-blue-600 to-purple-600 ..."
+className = "... bg-gradient-to-r from-blue-600 to-purple-600 ...";
 
 // Change message bubble colors
-className="... bg-blue-600 ..." // User messages
-className="... bg-white dark:bg-gray-800 ..." // Bot messages
+className = "... bg-blue-600 ..."; // User messages
+className = "... bg-white dark:bg-gray-800 ..."; // Bot messages
 ```
 
 ## Performance Optimization
@@ -278,24 +292,25 @@ if (isLoading) return;
 The chatbot only loads when opened:
 
 ```tsx
-<AnimatePresence>
-  {isOpen && <motion.div> ... </motion.div>}
-</AnimatePresence>
+<AnimatePresence>{isOpen && <motion.div> ... </motion.div>}</AnimatePresence>
 ```
 
 ## Security Considerations
 
 ✅ **API Key Protection**
+
 - Stored in environment variables
 - Never exposed to client code
 - Can be rotated easily
 
 ✅ **Input Sanitization**
+
 - Trims whitespace
 - Validates message length
 - No script injection possible
 
 ✅ **Rate Limiting**
+
 - Gemini API has built-in limits
 - Fallback system prevents failures
 
@@ -347,6 +362,7 @@ npm run build
 ### Netlify Deployment
 
 Add environment variable in Netlify dashboard:
+
 1. Site settings → Environment variables
 2. Add `VITE_GEMINI_API_KEY`
 3. Redeploy
@@ -368,6 +384,7 @@ VITE_API_URL=http://localhost:5000/api
 ### Chatbot Not Appearing
 
 **Check:**
+
 - ChatBot component is imported in page
 - No console errors
 - `isOpen` state is managed correctly
@@ -375,6 +392,7 @@ VITE_API_URL=http://localhost:5000/api
 ### AI Responses Not Working
 
 **Check:**
+
 - API key is set in `.env`
 - API key is valid (test at https://makersuite.google.com)
 - Network requests not blocked
@@ -383,6 +401,7 @@ VITE_API_URL=http://localhost:5000/api
 ### Build Errors
 
 **Common fixes:**
+
 ```bash
 # Clear node_modules and reinstall
 rm -rf node_modules
@@ -396,6 +415,7 @@ npm run dev
 ### Import Errors
 
 **Verify paths:**
+
 ```tsx
 // From Dashboard.tsx
 import ChatBot from "../components/ui/ChatBot";
@@ -409,24 +429,29 @@ import { ... } from "../../services/chatbotService";
 ### Planned Features
 
 🔮 **Voice Input**
+
 - Speech-to-text using Web Speech API
 - Voice responses with text-to-speech
 
 🔮 **Multi-language Support**
+
 - i18n integration
 - Auto-detect user language
 
 🔮 **Advanced Analytics**
+
 - Track common questions
 - Improve responses based on usage
 - A/B testing for prompts
 
 🔮 **Suggested Actions**
+
 - Clickable navigation links in responses
 - Direct actions (e.g., "Upload CSV" button)
 - Deep linking to specific features
 
 🔮 **Context Awareness++**
+
 - Remember previous conversations
 - User preferences learning
 - Personalized recommendations

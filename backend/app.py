@@ -24,6 +24,7 @@ import os
 # Try to import waitress for local development
 try:
     from waitress import serve
+
     WAITRESS_AVAILABLE = True
 except ImportError:
     WAITRESS_AVAILABLE = False

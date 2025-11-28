@@ -103,8 +103,9 @@ export default function ChatBot({ context }: ChatBotProps) {
         ) {
           navigate("/dashboard");
         } else if (
-          response.toLowerCase().includes("upload") && 
-          (response.toLowerCase().includes("csv") || response.toLowerCase().includes("students"))
+          response.toLowerCase().includes("upload") &&
+          (response.toLowerCase().includes("csv") ||
+            response.toLowerCase().includes("students"))
         ) {
           navigate("/dashboard");
           // Trigger file upload modal after navigation

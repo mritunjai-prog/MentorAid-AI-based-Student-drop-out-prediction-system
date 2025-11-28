@@ -9,23 +9,28 @@ I've successfully integrated **MentorBot**, an intelligent AI-powered chatbot in
 ## 🚀 Features Implemented
 
 ### 1. **Google Gemini AI Integration**
+
 - Uses Google's Gemini Pro model for natural language understanding
 - Context-aware responses based on current page and user data
 - Smart conversation history (last 5 messages for context)
 
 ### 2. **Fallback Rule-Based System**
+
 - Works perfectly WITHOUT API key using intelligent rules
 - 8+ pre-programmed response patterns
 - Never fails - always provides helpful guidance
 
 ### 3. **Quick Action Buttons**
+
 Four smart buttons for common tasks:
+
 - 📊 **Check Dropout Risk** - Guide on predictions
 - 📤 **Upload Students** - CSV upload instructions
 - 💡 **View Insights** - AI-powered analysis
 - 🎯 **Interventions** - Recommended strategies
 
 ### 4. **Beautiful UI/UX**
+
 - Floating chat button (bottom-right) with pulse animation
 - Smooth Framer Motion animations
 - Dark mode support
@@ -35,7 +40,9 @@ Four smart buttons for common tasks:
 - Clear chat functionality
 
 ### 5. **Context-Awareness**
+
 The bot knows:
+
 - Which page you're on (Dashboard, Student Details, etc.)
 - Your role (Teacher/Admin)
 - Current statistics (total students, risk levels)
@@ -46,17 +53,20 @@ The bot knows:
 ## 📁 Files Created/Modified
 
 ### **New Files Created:**
+
 1. `src/components/ui/ChatBot.tsx` (299 lines) - Main chatbot component
 2. `src/services/chatbotService.ts` (233 lines) - AI service & logic
 3. `CHATBOT_DOCUMENTATION.md` - Complete documentation
 
 ### **Modified Files:**
+
 1. `src/pages/Dashboard.tsx` - Added chatbot integration
 2. `src/pages/StudentDetails.tsx` - Added chatbot integration
 3. `.env` - Added VITE_GEMINI_API_KEY variable
 4. `package.json` - Added dependencies
 
 ### **Dependencies Added:**
+
 - `@google/generative-ai` - Gemini AI SDK
 - `framer-motion` - Smooth animations
 
@@ -74,6 +84,7 @@ The bot knows:
 ### **Step 2: Add API Key to Environment**
 
 Open `.env` file and add:
+
 ```env
 VITE_GEMINI_API_KEY=your_api_key_here
 ```
@@ -106,6 +117,7 @@ npm run build
 ## 💬 Sample Conversations
 
 ### Example 1: New User Greeting
+
 ```
 User: Hi
 Bot: 👋 Hello! I'm MentorBot, your AI guide for MentorAid!
@@ -120,6 +132,7 @@ What would you like to do today?
 ```
 
 ### Example 2: Checking Dropout Percentage
+
 ```
 User: How can I check a student's dropout percentage?
 Bot: 📊 To check a student's dropout risk:
@@ -132,6 +145,7 @@ Or upload a CSV with student data for batch predictions!
 ```
 
 ### Example 3: Understanding Risk Levels
+
 ```
 User: What does risk level mean?
 Bot: 🎯 Risk Level Meanings:
@@ -152,26 +166,31 @@ Risk is calculated using 47 features including grades, attendance, and engagemen
 ### What It Can Answer:
 
 ✅ **Navigation Questions**
+
 - "How do I navigate to dashboard?"
 - "Where can I upload students?"
 - "Show me student details"
 
 ✅ **Feature Explanations**
+
 - "What is risk level?"
 - "How accurate is the ML model?"
 - "What features are used?"
 
 ✅ **Technical Questions**
+
 - "How does the AI work?"
 - "What's the accuracy rate?"
 - "What is SMOTE?"
 
 ✅ **Intervention Guidance**
+
 - "What interventions should I use?"
 - "How to help at-risk students?"
 - "Best practices for dropout prevention"
 
 ✅ **CSV Upload Help**
+
 - "How to upload CSV?"
 - "What format should CSV be?"
 - "How many students can I upload?"
@@ -181,6 +200,7 @@ Risk is calculated using 47 features including grades, attendance, and engagemen
 ## 🔧 Technical Architecture
 
 ### AI Response Flow:
+
 ```
 User Types Message
     ↓
@@ -198,6 +218,7 @@ Save to Chat History (localStorage)
 ```
 
 ### Context Injection:
+
 ```typescript
 // Dashboard Example
 context: {
@@ -230,21 +251,27 @@ context: {
 ## 🌟 Intelligence Features
 
 ### 1. **Smart Context Awareness**
+
 The bot knows where you are:
+
 - On Dashboard → Provides overview help, upload guidance
 - On Student Details → Gives specific student insights
 
 ### 2. **Conversation Memory**
+
 - Remembers last 5 messages
 - Provides contextual follow-up responses
 - References previous questions
 
 ### 3. **Quick Actions**
+
 Pre-programmed smart buttons for:
+
 - Instant answers to common questions
 - One-click help on frequent tasks
 
 ### 4. **Persistent History**
+
 - Saves all conversations to localStorage
 - Continues where you left off
 - Clear chat option available
@@ -256,6 +283,7 @@ Pre-programmed smart buttons for:
 ### For Netlify (Frontend):
 
 1. **Add Environment Variable:**
+
    - Go to Netlify Dashboard
    - Site Settings → Environment Variables
    - Add: `VITE_GEMINI_API_KEY` = `your_api_key`
@@ -265,6 +293,7 @@ Pre-programmed smart buttons for:
    - Netlify auto-deploys
 
 ### For Render (Backend):
+
 No changes needed - chatbot is frontend-only!
 
 ---
@@ -273,22 +302,23 @@ No changes needed - chatbot is frontend-only!
 
 ### 🎯 **Compared to Basic Chatbots:**
 
-| Feature | Basic Chatbot | MentorBot |
-|---------|--------------|-----------|
-| AI Integration | ❌ No | ✅ Google Gemini |
-| Context Aware | ❌ No | ✅ Yes |
-| Fallback System | ❌ No | ✅ Rule-based |
-| Works Offline | ❌ No | ✅ Yes |
-| Chat History | ❌ No | ✅ Yes |
-| Quick Actions | ❌ No | ✅ 4 buttons |
-| Animations | ❌ Basic | ✅ Framer Motion |
-| Dark Mode | ❌ No | ✅ Yes |
+| Feature         | Basic Chatbot | MentorBot        |
+| --------------- | ------------- | ---------------- |
+| AI Integration  | ❌ No         | ✅ Google Gemini |
+| Context Aware   | ❌ No         | ✅ Yes           |
+| Fallback System | ❌ No         | ✅ Rule-based    |
+| Works Offline   | ❌ No         | ✅ Yes           |
+| Chat History    | ❌ No         | ✅ Yes           |
+| Quick Actions   | ❌ No         | ✅ 4 buttons     |
+| Animations      | ❌ Basic      | ✅ Framer Motion |
+| Dark Mode       | ❌ No         | ✅ Yes           |
 
 ---
 
 ## 🎓 Educational Value
 
 ### Students/Teachers Can:
+
 1. **Learn Platform Features** - Interactive guidance
 2. **Get ML Insights** - Understand model predictions
 3. **Best Practices** - Intervention recommendations
@@ -320,15 +350,19 @@ Want to make it even better? Consider:
 ## 🐛 Troubleshooting
 
 ### Issue: Chatbot not appearing
+
 **Solution:** Check that ChatBot component is imported in your page
 
 ### Issue: AI responses not working
+
 **Solution:** Verify API key in `.env` or use without API key (rule-based works!)
 
 ### Issue: Build errors
+
 **Solution:** Run `npm install` and ensure all dependencies are installed
 
 ### Issue: Import errors
+
 **Solution:** Check file paths - ChatBot.tsx uses `../../services/chatbotService`
 
 ---
@@ -364,6 +398,7 @@ After deployment, you'll have:
 ## 📚 Documentation
 
 Complete documentation available in:
+
 - `CHATBOT_DOCUMENTATION.md` - Technical details
 - Code comments in `chatbotService.ts` - Implementation notes
 - This file - Quick start guide
@@ -373,6 +408,7 @@ Complete documentation available in:
 ## 🙏 Credits
 
 **Technology Stack:**
+
 - Google Gemini AI - Natural language processing
 - Framer Motion - Smooth animations
 - React - UI framework
@@ -386,11 +422,13 @@ Complete documentation available in:
 The chatbot is **production-ready** and works in two modes:
 
 **🚀 With Gemini API:**
+
 - Smart, contextual AI responses
 - Natural conversation flow
 - Learns from context
 
 **🎯 Without API (Fallback):**
+
 - Rule-based pattern matching
 - Still highly useful
 - No external dependencies
@@ -405,6 +443,7 @@ Both modes provide excellent user experience!
 The intelligent AI chatbot is now **fully integrated** into MentorAid!
 
 **Next Steps:**
+
 1. Get Gemini API key (optional but recommended)
 2. Test locally with `npm run dev`
 3. Deploy to Netlify
@@ -414,5 +453,5 @@ The intelligent AI chatbot is now **fully integrated** into MentorAid!
 
 ---
 
-*Created with intelligence and care for MentorAid*
-*© 2025 - Powered by Google Gemini AI*
+_Created with intelligence and care for MentorAid_
+_© 2025 - Powered by Google Gemini AI_

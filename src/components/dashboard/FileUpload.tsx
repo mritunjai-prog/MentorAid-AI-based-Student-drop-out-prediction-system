@@ -84,6 +84,14 @@ export function FileUpload({ onClose, onUpload }: FileUploadProps) {
         return;
       }
 
+      // Check if user is logged in
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        toast.error("Please login first to upload files.");
+        setUploading(false);
+        return;
+      }
+
       // Use the authenticated API client
       const data = await predictionAPI.predictBatch(file);
 
@@ -92,13 +100,20 @@ export function FileUpload({ onClose, onUpload }: FileUploadProps) {
       // Pass results to parent component
       onUpload(data.predictions, data.summary);
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Upload error:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Failed to upload and process file"
-      );
+      console.error("Error response:", JSON.stringify(error.response?.data));
+      console.error("Error status:", error.response?.status);
+      console.error("Token present:", !!localStorage.getItem("access_token"));
+
+      const errorMessage =
+        error.response?.data?.msg ||
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to upload and process file";
+
+      toast.error(errorMessage);
     } finally {
       setUploading(false);
     }

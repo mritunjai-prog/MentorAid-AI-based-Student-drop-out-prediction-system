@@ -142,7 +142,10 @@ const getRuleBasedResponse = (message: string): string => {
   if (
     lowerMessage.includes("risk predictor") ||
     lowerMessage.includes("quick assessment") ||
-    lowerMessage.includes("predictor tool")
+    lowerMessage.includes("predictor tool") ||
+    lowerMessage.includes("predict risk") ||
+    lowerMessage.includes("risk prediction") ||
+    lowerMessage.includes("check risk")
   ) {
     return "🎯 Quick Risk Predictor Tool!\n\nUse this for fast, simplified risk assessments. Just enter:\n- Student name & ID\n- Attendance %\n- Average marks\n- Fee status\n\nGet instant predictions with recommendations!\n\n✨ Taking you to the Risk Predictor now...";
   }

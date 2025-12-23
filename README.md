@@ -45,11 +45,12 @@
 
 ### 🏆 Key Achievements
 
-- ✅ **6 Trained ML Models** (SVM, Random Forest, Neural Networks, Logistic Regression, KNN, Decision Tree)
-- ✅ Trained on **4,426 real student records**
-- ✅ Analyzes **28 critical features** for dropout prediction
-- ✅ Modern, responsive UI with dark mode support
-- ✅ Real-time risk assessment dashboard
+- ✅ **19 ML Models Trained and Evaluated** (Phase 1, 2, 3)
+- ✅ **Best Model: Random Forest + SMOTE - 76.61% Test Accuracy**
+- ✅ Trained on **4,424 real student records** (3,539 training + 885 test)
+- ✅ Analyzes **47 production features** (28 original + 20 engineered)
+- ✅ Implemented feature engineering pipeline with SMOTE balancing
+- ✅ Modern, responsive UI with dark mode support and real-time predictions
 
 ---
 
@@ -128,42 +129,63 @@
 
 ### Model Performance Comparison
 
-| Model               | Accuracy   | Precision | Recall | F1-Score | Status            |
-| ------------------- | ---------- | --------- | ------ | -------- | ----------------- |
-| **SVM (RBF)**       | 98.76%     | 98.71%    | 98.80% | 98.75%   | ✅ **Production** |
-| Random Forest       | 98.45%     | 98.39%    | 98.51% | 98.45%   | ✅ Trained        |
-| Neural Network      | 97.82%     | 97.78%    | 97.86% | 97.82%   | ✅ Trained        |
-| Logistic Regression | 96.12%     | 96.08%    | 96.16% | 96.12%   | ✅ Trained        |
-| K-Nearest Neighbors | 95.34%     | 95.29%    | 95.39% | 95.34%   | ✅ Trained        |
-| Decision Tree       | 94.21%     | 94.15%    | 94.27% | 94.21%   | ✅ Trained        |
+### Model Performance Comparison
+
+| Model                          | Accuracy | Phase   | Status            | Notes                    |
+| ------------------------------ | -------- | ------- | ----------------- | ------------------------ |
+| **RF + SMOTE + 20 Features**   | **76.61%** | Phase 2 | ✅ **PRODUCTION** | Best model with engineering |
+| Random Forest (Tuned)          | 75.37%   | Phase 2 | ✅ Trained        | Enhanced variant         |
+| XGBoost (Tuned)                | 75.25%   | Phase 2 | ✅ Trained        | Gradient boosting        |
+| Stacking Ensemble              | 74.92%   | Phase 2 | ✅ Trained        | Ensemble approach        |
+| LightGBM                       | 74.80%   | Phase 2 | ✅ Trained        | Fast gradient boosting   |
+| Random Forest (Baseline)       | 75.14%   | Phase 1 | ✅ Trained        | Baseline performance     |
+| Gradient Boosting              | 75.14%   | Phase 1 | ✅ Trained        | Baseline performance     |
+| AdaBoost                       | 74.80%   | Phase 1 | ✅ Trained        | Baseline                 |
+| Extra Trees                    | 74.12%   | Phase 1 | ✅ Trained        | Baseline                 |
+| Logistic Regression            | 73.90%   | Phase 1 | ✅ Trained        | Linear model             |
+| Decision Tree                  | 71.64%   | Phase 1 | ✅ Trained        | Simple baseline          |
+| Neural Networks                | 72-75%   | DL      | ⚠️  Not optimal   | Overfitting on small data |
+| K-Nearest Neighbors            | 69.27%   | Phase 1 | ✅ Trained        | Distance-based           |
+| Support Vector Machine         | 68.36%   | Phase 1 | ✅ Trained        | Baseline                 |
+| Naive Bayes                    | 62.82%   | Phase 1 | ✅ Trained        | Probabilistic baseline   |
 
 ### 📊 Dataset Overview
 
-- **Total Records:** 4,426 students
-- **Features:** 35 attributes (28 used after preprocessing)
-- **Target Classes:** Dropout, Graduate, Enrolled
-- **Data Quality:** Cleaned, outlier-removed, normalized
+- **Total Records:** 4,424 students
+- **Training Set:** 3,539 samples → 5,301 after SMOTE balancing
+- **Test Set:** 885 samples
+- **Original Features:** 28 attributes
+- **Engineered Features:** 20 additional features (+1.47% accuracy)
+- **Production Features:** 47 total features (7 dropped due to low correlation)
+- **Target Classes:** Dropout (32%), Enrolled (18%), Graduate (50%)
+- **Data Quality:** Cleaned, outlier-removed, normalized, class-balanced with SMOTE
 
-### 🎯 Key Prediction Features (Top 5)
+### 🎯 Key Findings
 
-1. **Curricular units 2nd sem (grade)** - 18.5% importance
-2. **Tuition fees up to date** - 12.3% importance
-3. **Curricular units 2nd sem (evaluations)** - 9.8% importance
-4. **Age at enrollment** - 7.6% importance
-5. **Debtor status** - 6.4% importance
+**Model Selection Process:**
+- Evaluated 19 different models across 3 optimization phases
+- Best baseline: Random Forest at 75.14%
+- Added feature engineering (+1.47% boost to 76.61%)
+- Optimization attempts (Phase 3) led to overfitting
+- **Final choice:** Simpler model with engineered features outperforms complex tuning
+
+**Feature Engineering Impact:**
+- 20 engineered features created from original 28
+- 6 of top 10 most important features are engineered
+- Reduced to 47 production features (removed low-correlation features)
+- Feature engineering strategy proved more effective than hyperparameter tuning
 
 ### 📁 Available Models
 
 ```
 ml-models/trained-models/
-├── svm_tuned_model.pkl          # SVM Model
-├── rf_tuned_model.pkl           # Random Forest
-├── lr_tuned_model.pkl           # Logistic Regression
-├── knn_tuned_model.pkl          # K-Nearest Neighbors
-├── dt_tuned_model.pkl           # Decision Tree
-├── nn_tuned_advanced.keras      # Neural Network
-├── feature_names.pkl            # Feature list
-└── label_encoder.pkl            # Target encoder
+├── random_forest_model.pkl      # PRODUCTION MODEL (76.61% accuracy)
+├── scaler.pkl                   # Feature scaling
+├── label_encoder.pkl            # Class encoding
+├── feature_names.pkl            # 47 production features
+├── model_metadata.json          # Model configuration
+├── feature_importance.csv       # Top features ranking
+└── model_performance.png        # Performance visualization
 ```
 
 ---

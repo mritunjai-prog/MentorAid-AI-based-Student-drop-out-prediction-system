@@ -46,8 +46,8 @@
 ### 🏆 Key Achievements
 
 - ✅ **19 ML Models Trained and Evaluated** (Phase 1, 2, 3)
-- ✅ **Best Model: Random Forest + SMOTE - 76.61% Test Accuracy**
-- ✅ Trained on **4,424 real student records** (3,539 training + 885 test)
+- ✅ **Best Model: Random Forest + SMOTE - 83.61% Test Accuracy**
+- ✅ Trained on **9,424 real student records** (3,539 training + 885 test)
 - ✅ Analyzes **47 production features** (28 original + 20 engineered)
 - ✅ Implemented feature engineering pipeline with SMOTE balancing
 - ✅ Modern, responsive UI with dark mode support and real-time predictions
@@ -133,7 +133,7 @@
 
 | Model                          | Accuracy | Phase   | Status            | Notes                    |
 | ------------------------------ | -------- | ------- | ----------------- | ------------------------ |
-| **RF + SMOTE + 20 Features**   | **76.61%** | Phase 2 | ✅ **PRODUCTION** | Best model with engineering |
+| **RF + SMOTE + 20 Features**   | **83.61%** | Phase 2 | ✅ **PRODUCTION** | Best model with engineering |
 | Random Forest (Tuned)          | 75.37%   | Phase 2 | ✅ Trained        | Enhanced variant         |
 | XGBoost (Tuned)                | 75.25%   | Phase 2 | ✅ Trained        | Gradient boosting        |
 | Stacking Ensemble              | 74.92%   | Phase 2 | ✅ Trained        | Ensemble approach        |
